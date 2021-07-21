@@ -42,12 +42,7 @@
 #include <std_msgs/UInt16.h>
 #include <tf2_msgs/TFMessage.h>
 using namespace std;
-struct SubTopic {
-  char str[100];
-};
-struct PubTopic {
-  char str[100];
-};
+
 //---------------------------------------相关参数-----------------------------------------------
 int flag_use_laser_or_vicon;  // 0:使用mocap数据作为定位数据 1:使用laser数据作为定位数据
 //---------------------------------------vicon定位相关------------------------------------------
@@ -180,79 +175,79 @@ int main(int argc, char** argv) {
   // 使用激光SLAM数据orVicon数据 0 for vicon， 1 for 激光SLAM
   nh.param<int>("pos_estimator/flag_use_laser_or_vicon", flag_use_laser_or_vicon, 0);
   /*----------- determine the  ID of the drone -----------------------------*/
-  SubTopic vrpn_client_node_UAV_pose;
-  SubTopic tf;
-  SubTopic sonic;
-  SubTopic TFmini_TFmini;
-  PubTopic mavros_vision_pose_pose;
-  PubTopic px4_command_drone_state;
+  std::string vrpn_client_node_UAV_pose;
+  std::string tf;
+  std::string sonic;
+  std::string TFmini_TFmini;
+  std::string mavros_vision_pose_pose;
+  std::string px4_command_drone_state;
   // add preflex: (mavros and px4_command use lower case uav, while /vrpn_client_node/UAV use upper case UAV)
-  strcpy(vrpn_client_node_UAV_pose.str, "/vrpn_client_node/UAV");
-  strcpy(tf.str, "/uav");
-  strcpy(sonic.str, "/uav");
-  strcpy(TFmini_TFmini.str, "/uav");
-  strcpy(mavros_vision_pose_pose.str, "/uav");
-  strcpy(px4_command_drone_state.str, "/uav");
+  vrpn_client_node_UAV_pose = "/vrpn_client_node/UAV";
+  tf = "/uav";
+  sonic = "/uav";
+  TFmini_TFmini = "/uav";
+  mavros_vision_pose_pose = "/uav";
+  px4_command_drone_state = "/uav";
 
-  char ID[20];  // ID of the uav
+  std::string ID;  // ID of the uav
 
   if (argc > 1) {
     // if ID is specified as the second argument
-    strcat(vrpn_client_node_UAV_pose.str, argv[1]);
-    strcat(tf.str, argv[1]);
-    strcat(sonic.str, argv[1]);
-    strcat(TFmini_TFmini.str, argv[1]);
-    strcat(mavros_vision_pose_pose.str, argv[1]);
-    strcat(px4_command_drone_state.str, argv[1]);
+    vrpn_client_node_UAV_pose += argv[1];
+    tf += argv[1];
+    sonic += argv[1];
+    TFmini_TFmini += argv[1];
+    mavros_vision_pose_pose += argv[1];
+    px4_command_drone_state += argv[1];
     ROS_INFO("UAV ID specified as: UAV%s", argv[1]);
-    strcpy(ID, argv[1]);
+    ID = argv[1];
   } else {
     // if ID is not specified, then set the drone to UAV0
-    strcat(vrpn_client_node_UAV_pose.str, "0");
-    strcat(tf.str, "0");
-    strcat(sonic.str, "0");
-    strcat(TFmini_TFmini.str, "0");
-    strcat(mavros_vision_pose_pose.str, "0");
-    strcat(px4_command_drone_state.str, "0");
+    vrpn_client_node_UAV_pose += "0";
+    tf += "0";
+    sonic += "0";
+    TFmini_TFmini += "0";
+    mavros_vision_pose_pose += "0";
+    px4_command_drone_state += "0";
     ROS_WARN("NO UAV ID specified, set ID to 0.");
-    strcpy(ID, "0");
+    ID = "0";
   }
 
   state_from_mavros_multidrone _state_from_mavros(ID);  // define the state_from_mavros
-  strcat(vrpn_client_node_UAV_pose.str, "/pose");
-  strcat(tf.str, "/tf");
-  strcat(sonic.str, "/sonic");
-  strcat(TFmini_TFmini.str, "/TFmini/TFmini");
-  strcat(mavros_vision_pose_pose.str, "/mavros/vision_pose/pose");
-  strcat(px4_command_drone_state.str, "/px4_command/drone_state");
+  vrpn_client_node_UAV_pose += "/pose";
+  tf += "/tf";
+  sonic += "/sonic";
+  TFmini_TFmini += "/TFmini/TFmini";
+  mavros_vision_pose_pose += "/mavros/vision_pose/pose";
+  px4_command_drone_state += "/px4_command/drone_state";
 
-  ROS_INFO("Subscribe uav Mocap from: %s", vrpn_client_node_UAV_pose.str);
-  ROS_INFO("Subscribe TFMessage from: %s", tf.str);
-  ROS_INFO("Subscribe sonic from: %s", sonic.str);
-  ROS_INFO("Subscribe TFmini from: %s", TFmini_TFmini.str);
-  ROS_INFO("Publish mavros_vision_pose_pose to: %s", mavros_vision_pose_pose.str);
-  ROS_INFO("Publish PoseStamped to: %s", px4_command_drone_state.str);
+  ROS_INFO("Subscribe uav Mocap from: %s", vrpn_client_node_UAV_pose.c_str());
+  ROS_INFO("Subscribe TFMessage from: %s", tf.c_str());
+  ROS_INFO("Subscribe sonic from: %s", sonic.c_str());
+  ROS_INFO("Subscribe TFmini from: %s", TFmini_TFmini.c_str());
+  ROS_INFO("Publish mavros_vision_pose_pose to: %s", mavros_vision_pose_pose.c_str());
+  ROS_INFO("Publish PoseStamped to: %s", px4_command_drone_state.c_str());
 
   // 【订阅】cartographer估计位置
-  ros::Subscriber laser_sub = nh.subscribe<tf2_msgs::TFMessage>(tf.str, 1000, laser_cb);
+  ros::Subscriber laser_sub = nh.subscribe<tf2_msgs::TFMessage>(tf, 1000, laser_cb);
 
   // 【订阅】超声波的数据
-  ros::Subscriber sonic_sub = nh.subscribe<std_msgs::UInt16>(sonic.str, 100, sonic_cb);
+  ros::Subscriber sonic_sub = nh.subscribe<std_msgs::UInt16>(sonic, 100, sonic_cb);
 
   // 【订阅】tf mini的数据
-  ros::Subscriber tfmini_sub = nh.subscribe<sensor_msgs::Range>(TFmini_TFmini.str, 100, tfmini_cb);
+  ros::Subscriber tfmini_sub = nh.subscribe<sensor_msgs::Range>(TFmini_TFmini, 100, tfmini_cb);
 
   // 【订阅】optitrack估计位置
   ros::Subscriber optitrack_sub =
-      nh.subscribe<geometry_msgs::PoseStamped>(vrpn_client_node_UAV_pose.str, 1000, optitrack_cb);
+      nh.subscribe<geometry_msgs::PoseStamped>(vrpn_client_node_UAV_pose, 1000, optitrack_cb);
 
   // 【发布】无人机位置和偏航角 坐标系 ENU系
   //  本话题要发送飞控(通过mavros_extras/src/plugins/vision_pose_estimate.cpp发送),
   //  对应Mavlink消息为VISION_POSITION_ESTIMATE(#??), 对应的飞控中的uORB消息为vehicle_vision_position.msg 及
   //  vehicle_vision_attitude.msg
-  vision_pub = nh.advertise<geometry_msgs::PoseStamped>(mavros_vision_pose_pose.str, 100);
+  vision_pub = nh.advertise<geometry_msgs::PoseStamped>(mavros_vision_pose_pose, 100);
 
-  drone_state_pub = nh.advertise<px4_command::DroneState>(px4_command_drone_state.str, 100);
+  drone_state_pub = nh.advertise<px4_command::DroneState>(px4_command_drone_state, 100);
 
   ROS_INFO("Start the estimator...");
 

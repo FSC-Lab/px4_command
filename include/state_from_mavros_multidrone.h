@@ -32,28 +32,28 @@ using namespace std;
 class state_from_mavros_multidrone {
  public:
   // constructed function
-  state_from_mavros_multidrone(const char *ID)
+  state_from_mavros_multidrone(const std::string &ID)
       :  // add drone ID as input argument
         state_nh("~") {
-    char mavros_state[100];                          //
-    char mavros_local_position_pose[100];            //
-    char mavros_local_position_velocity_local[100];  //
-    char mavros_imu_data[100];                       //
+    std::string mavros_state;                          //
+    std::string mavros_local_position_pose;            //
+    std::string mavros_local_position_velocity_local;  //
+    std::string mavros_imu_data;                       //
 
-    strcpy(mavros_state, "/uav");
-    strcpy(mavros_local_position_pose, "/uav");
-    strcpy(mavros_local_position_velocity_local, "/uav");
-    strcpy(mavros_imu_data, "/uav");
+    mavros_state = "/uav";
+    mavros_local_position_pose = "/uav";
+    mavros_local_position_velocity_local = "/uav";
+    mavros_imu_data = "/uav";
 
-    strcat(mavros_state, ID);
-    strcat(mavros_local_position_pose, ID);
-    strcat(mavros_local_position_velocity_local, ID);
-    strcat(mavros_imu_data, ID);
+    mavros_state += ID;
+    mavros_local_position_pose += ID;
+    mavros_local_position_velocity_local += ID;
+    mavros_imu_data += ID;
 
-    strcat(mavros_state, "/mavros/state");
-    strcat(mavros_local_position_pose, "/mavros/local_position/pose");
-    strcat(mavros_local_position_velocity_local, "/mavros/local_position/velocity_local");
-    strcat(mavros_imu_data, "/mavros/imu/data");
+    mavros_state += "/mavros/state";
+    mavros_local_position_pose += "/mavros/local_position/pose";
+    mavros_local_position_velocity_local += "/mavros/local_position/velocity_local";
+    mavros_imu_data += "/mavros/imu/data";
 
     // 【订阅】无人机当前状态 - 来自飞控
     //  本话题来自飞控(通过Mavros功能包 /plugins/sys_status.cpp)
@@ -78,10 +78,10 @@ class state_from_mavros_multidrone {
     attitude_sub =
         state_nh.subscribe<sensor_msgs::Imu>(mavros_imu_data, 10, &state_from_mavros_multidrone::att_cb, this);
 
-    ROS_INFO("Subscribe mavros State from: %s", mavros_state);
-    ROS_INFO("Subscribe mavros local position pose from: %s ", mavros_local_position_pose);
-    ROS_INFO("Subscribe mavros local velocity from: %s", mavros_local_position_velocity_local);
-    ROS_INFO("Subscribe IMU from: %s", mavros_imu_data);
+    ROS_INFO("Subscribe mavros State from: %s", mavros_state.c_str());
+    ROS_INFO("Subscribe mavros local position pose from: %s ", mavros_local_position_pose.c_str());
+    ROS_INFO("Subscribe mavros local velocity from: %s", mavros_local_position_velocity_local.c_str());
+    ROS_INFO("Subscribe IMU from: %s", mavros_imu_data.c_str());
   }
 
   //变量声明

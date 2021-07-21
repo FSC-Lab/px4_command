@@ -32,7 +32,7 @@ using std::string;
 
 class pos_controller_TIE {
  public:
-  pos_controller_TIE(char drone_ID[20], ros::NodeHandle& main_handle) {
+  pos_controller_TIE(const std::string& drone_ID, ros::NodeHandle& main_handle) {
     // use drone ID to get the correct name for parameters
     uav_pref = "uav";
     uav_pref = uav_pref + drone_ID[0];

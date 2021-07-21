@@ -39,13 +39,6 @@
 #include <px4_command_utils.h>
 using namespace std;
 
-struct SubTopic {
-  char str[100];
-};
-struct PubTopic {
-  char str[100];
-};
-
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>> UAV command and state <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 static px4_command::ControlCommand Command_Now;
 static px4_command::ControlCommand Command_Last;
@@ -184,54 +177,54 @@ int main(int argc, char** argv) {
   ros::NodeHandle nh("~");
 
   /*----------- determine the  ID of the drone -----------------------------*/
-  SubTopic px4_commmand_control_command;
-  SubTopic px4_commmand_drone_state;
-  PubTopic px4_command_topic_for_log;
-  PubTopic px4_command_generalinfo;
+  std::string px4_commmand_control_command;
+  std::string px4_commmand_drone_state;
+  std::string px4_command_topic_for_log;
+  std::string px4_command_generalinfo;
   // add preflex:
-  strcpy(px4_commmand_control_command.str, "/uav");
-  strcpy(px4_commmand_drone_state.str, "/uav");
-  strcpy(px4_command_topic_for_log.str, "/uav");
-  strcpy(px4_command_generalinfo.str, "/uav");
-  char ID[20];
+  px4_commmand_control_command = "/uav";
+  px4_commmand_drone_state = "/uav";
+  px4_command_topic_for_log = "/uav";
+  px4_command_generalinfo = "/uav";
+  std::string ID;
   if (argc > 1) {
     // if ID is specified as the second argument
-    strcat(px4_commmand_control_command.str, argv[1]);
-    strcat(px4_commmand_drone_state.str, argv[1]);
-    strcat(px4_command_topic_for_log.str, argv[1]);
-    strcat(px4_command_generalinfo.str, argv[1]);
-    strcpy(ID, argv[1]);
+    px4_commmand_control_command += argv[1];
+    px4_commmand_drone_state += argv[1];
+    px4_command_topic_for_log += argv[1];
+    px4_command_generalinfo += argv[1];
+    ID = argv[1];
     CurrentdroneID = *argv[1] - '0';
     ROS_INFO("UAV ID specified as: uav%s", argv[1]);
   } else {
     // if ID is not specified, then set the drone to UAV0
-    strcat(px4_commmand_control_command.str, "0");
-    strcat(px4_commmand_drone_state.str, "0");
-    strcat(px4_command_topic_for_log.str, "0");
-    strcat(px4_command_generalinfo.str, "0");
-    strcpy(ID, "0");
+    px4_commmand_control_command += "0";
+    px4_commmand_drone_state += "0";
+    px4_command_topic_for_log += "0";
+    px4_command_generalinfo += "0";
+    ID = "0";
     CurrentdroneID = 0;
     ROS_WARN("NO UAV ID specified, set ID to 0.");
   }
-  strcat(px4_commmand_control_command.str, "/px4_command/control_command");
-  strcat(px4_commmand_drone_state.str, "/px4_command/drone_state");
-  strcat(px4_command_topic_for_log.str, "/px4_command/topic_for_log");
-  strcat(px4_command_generalinfo.str, "/px4_command/generalinfo");
+  px4_commmand_control_command += "/px4_command/control_command";
+  px4_commmand_drone_state += "/px4_command/drone_state";
+  px4_command_topic_for_log += "/px4_command/topic_for_log";
+  px4_command_generalinfo += "/px4_command/generalinfo";
 
-  ROS_INFO("Subscribe ControlCommand from: %s", px4_commmand_control_command.str);
-  ROS_INFO("Subscribe DroneState from: %s", px4_commmand_drone_state.str);
-  ROS_INFO("Publish Topic_for_log to: %s", px4_command_topic_for_log.str);
-  ROS_INFO("Client call general info to: %s", px4_command_generalinfo.str);
+  ROS_INFO("Subscribe ControlCommand from: %s", px4_commmand_control_command.c_str());
+  ROS_INFO("Subscribe DroneState from: %s", px4_commmand_drone_state.c_str());
+  ROS_INFO("Publish Topic_for_log to: %s", px4_command_topic_for_log.c_str());
+  ROS_INFO("Client call general info to: %s", px4_command_generalinfo.c_str());
   // 本话题来自根据需求自定义的上层模块，比如track_land.cpp 比如move.cpp
   ros::Subscriber Command_sub =
-      nh.subscribe<px4_command::ControlCommand>(px4_commmand_control_command.str, 100, Command_cb);
+      nh.subscribe<px4_command::ControlCommand>(px4_commmand_control_command, 100, Command_cb);
   // 本话题来自根据需求自定px4_pos_estimator.cpp
   ros::Subscriber drone_state_sub =
-      nh.subscribe<px4_command::DroneState>(px4_commmand_drone_state.str, 100, drone_state_cb);
+      nh.subscribe<px4_command::DroneState>(px4_commmand_drone_state, 100, drone_state_cb);
   // 发布log消息至ground_station.cpp
-  ros::Publisher log_pub = nh.advertise<px4_command::Topic_for_log>(px4_command_topic_for_log.str, 100);
+  ros::Publisher log_pub = nh.advertise<px4_command::Topic_for_log>(px4_command_topic_for_log, 100);
   // ros client to send the primary Parameters
-  ros::ServiceClient clientSendParameter = nh.serviceClient<px4_command::GeneralInfo>(px4_command_generalinfo.str);
+  ros::ServiceClient clientSendParameter = nh.serviceClient<px4_command::GeneralInfo>(px4_command_generalinfo);
 
   // 参数读取
   nh.param<float>("Takeoff_height", Takeoff_height, 0.3);

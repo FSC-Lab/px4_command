@@ -33,7 +33,7 @@ using std::string;
 namespace multidronepayload {
 class payload_controller_JGCD {
  public:
-  payload_controller_JGCD(char drone_ID[20], ros::NodeHandle& main_handle);
+  payload_controller_JGCD(const std::string& drone_ID, ros::NodeHandle& main_handle);
   ~payload_controller_JGCD();
   // topic setup
   void ros_topic_setup(ros::NodeHandle& main_handle);
@@ -150,7 +150,7 @@ class payload_controller_JGCD {
   Eigen::Vector3f e_3;
 };
 
-payload_controller_JGCD::payload_controller_JGCD(char drone_ID[20], ros::NodeHandle& main_handle) {
+payload_controller_JGCD::payload_controller_JGCD(const std::string& drone_ID, ros::NodeHandle& main_handle) {
   // use drone ID to get the correct name for parameters
   uav_pref = "uav";
   uav_pref = uav_pref + drone_ID[0];

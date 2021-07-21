@@ -45,7 +45,7 @@ using namespace std;
 class command_to_mavros_multidrone {
  public:
   // constructed function
-  command_to_mavros_multidrone(const char* ID) : command_nh("~") {
+  command_to_mavros_multidrone(const std::string& ID) : command_nh("~") {
     /*
     sub
     "/mavros/setpoint_raw/target_local"
@@ -60,60 +60,60 @@ class command_to_mavros_multidrone {
     "/mavros/set_mode"
     */
 
-    char mavros_setpoint_raw_target_local[100];     //
-    char mavros_setpoint_raw_target_attitude[100];  //
-    char mavros_target_actuator_control[100];
+    std::string mavros_setpoint_raw_target_local;     //
+    std::string mavros_setpoint_raw_target_attitude;  //
+    std::string mavros_target_actuator_control;
 
-    char mavros_setpoint_raw_local[100];     //
-    char mavros_setpoint_raw_attitude[100];  //
-    char mavros_actuator_control[100];       //
+    std::string mavros_setpoint_raw_local;     //
+    std::string mavros_setpoint_raw_attitude;  //
+    std::string mavros_actuator_control;       //
 
-    char mavros_cmd_arming[100];
-    char mavros_set_mode[100];
+    std::string mavros_cmd_arming;
+    std::string mavros_set_mode;
 
-    strcpy(mavros_setpoint_raw_target_local, "/uav");
-    strcpy(mavros_setpoint_raw_target_attitude, "/uav");
-    strcpy(mavros_target_actuator_control, "/uav");
+    mavros_setpoint_raw_target_local = "/uav";
+    mavros_setpoint_raw_target_attitude = "/uav";
+    mavros_target_actuator_control = "/uav";
 
-    strcpy(mavros_setpoint_raw_local, "/uav");
-    strcpy(mavros_setpoint_raw_attitude, "/uav");
-    strcpy(mavros_actuator_control, "/uav");
+    mavros_setpoint_raw_local = "/uav";
+    mavros_setpoint_raw_attitude = "/uav";
+    mavros_actuator_control = "/uav";
 
-    strcpy(mavros_cmd_arming, "/uav");
-    strcpy(mavros_set_mode, "/uav");
+    mavros_cmd_arming = "/uav";
+    mavros_set_mode = "/uav";
 
-    strcat(mavros_setpoint_raw_target_local, ID);
-    strcat(mavros_setpoint_raw_target_attitude, ID);
-    strcat(mavros_target_actuator_control, ID);
+    mavros_setpoint_raw_target_local += ID;
+    mavros_setpoint_raw_target_attitude += ID;
+    mavros_target_actuator_control += ID;
 
-    strcat(mavros_setpoint_raw_local, ID);
-    strcat(mavros_setpoint_raw_attitude, ID);
-    strcat(mavros_actuator_control, ID);
+    mavros_setpoint_raw_local += ID;
+    mavros_setpoint_raw_attitude += ID;
+    mavros_actuator_control += ID;
 
-    strcat(mavros_cmd_arming, ID);
-    strcat(mavros_set_mode, ID);
+    mavros_cmd_arming += ID;
+    mavros_set_mode += ID;
 
-    strcat(mavros_setpoint_raw_target_local, "/mavros/setpoint_raw/target_local");
-    strcat(mavros_setpoint_raw_target_attitude, "/mavros/setpoint_raw/target_attitude");
-    strcat(mavros_target_actuator_control, "/mavros/target_actuator_control");
+    mavros_setpoint_raw_target_local += "/mavros/setpoint_raw/target_local";
+    mavros_setpoint_raw_target_attitude += "/mavros/setpoint_raw/target_attitude";
+    mavros_target_actuator_control += "/mavros/target_actuator_control";
 
-    strcat(mavros_setpoint_raw_local, "/mavros/setpoint_raw/local");
-    strcat(mavros_setpoint_raw_attitude, "/mavros/setpoint_raw/attitude");
-    strcat(mavros_actuator_control, "/mavros/actuator_control");
+    mavros_setpoint_raw_local += "/mavros/setpoint_raw/local";
+    mavros_setpoint_raw_attitude += "/mavros/setpoint_raw/attitude";
+    mavros_actuator_control += "/mavros/actuator_control";
 
-    strcat(mavros_cmd_arming, "/mavros/cmd/arming");
-    strcat(mavros_set_mode, "/mavros/set_mode");
+    mavros_cmd_arming += "/mavros/cmd/arming";
+    mavros_set_mode += "/mavros/set_mode";
 
-    ROS_INFO("Subscribe POSITION_TARGET_LOCAL_NED from: %s", mavros_setpoint_raw_target_local);
-    ROS_INFO("Subscribe ATTITUDE_TARGET (#83) from: %s ", mavros_setpoint_raw_target_attitude);
-    ROS_INFO("Subscribe ACTUATOR_CONTROL_TARGET from: %s", mavros_target_actuator_control);
+    ROS_INFO("Subscribe POSITION_TARGET_LOCAL_NED from: %s", mavros_setpoint_raw_target_local.c_str());
+    ROS_INFO("Subscribe ATTITUDE_TARGET (#83) from: %s ", mavros_setpoint_raw_target_attitude.c_str());
+    ROS_INFO("Subscribe ACTUATOR_CONTROL_TARGET from: %s", mavros_target_actuator_control.c_str());
 
-    ROS_INFO("Publish SET_POSITION_TARGET_LOCAL_NED to: %s", mavros_setpoint_raw_local);
-    ROS_INFO("Publish SET_ATTITUDE_TARGET to: %s", mavros_setpoint_raw_attitude);
-    ROS_INFO("Publish SET_ACTUATOR_CONTROL_TARGET to: %s", mavros_actuator_control);
+    ROS_INFO("Publish SET_POSITION_TARGET_LOCAL_NED to: %s", mavros_setpoint_raw_local.c_str());
+    ROS_INFO("Publish SET_ATTITUDE_TARGET to: %s", mavros_setpoint_raw_attitude.c_str());
+    ROS_INFO("Publish SET_ACTUATOR_CONTROL_TARGET to: %s", mavros_actuator_control.c_str());
 
-    ROS_INFO("Service client armming: %s", mavros_cmd_arming);
-    ROS_INFO("Service client set mode: %s", mavros_set_mode);
+    ROS_INFO("Service client armming: %s", mavros_cmd_arming.c_str());
+    ROS_INFO("Service client set mode: %s", mavros_set_mode.c_str());
 
     pos_drone_fcu_target = Eigen::Vector3d(0.0, 0.0, 0.0);
     vel_drone_fcu_target = Eigen::Vector3d(0.0, 0.0, 0.0);

@@ -177,27 +177,27 @@ int main(int argc, char** argv) {
   std::string TopicMavrosGPSHome = "/uav";
   std::string TopicGCSGPSHome = "/uav";
   std::string TopicVisionFeedback = "/";  // TO DO: add a uav tag later
-  char* droneID = NULL;
-  char droneDefaultID = '0';
+  std::string droneID;
+  std::string droneDefaultID = "0";
   if (argc > 1) {  // if ID is specified as the second argument
     ROS_INFO("UAV ID specified as: UAV%s", argv[1]);
     droneID = argv[1];
   } else {
     // if ID is not specified, then set the drone to UAV0
-    droneID = &droneDefaultID;
+    droneID = droneDefaultID;
     ROS_WARN("NO UAV ID is specified, set the ID to 0!");
   }
   // add uav prefixes to topic strings
-  TopicMavrosGPSPos.push_back(*droneID);
-  TopicMavrosGPSGlobal.push_back(*droneID);
-  TopicVisionPayload.push_back(*droneID);  // TO DO
-  TopicPx4CommandDroneState.push_back(*droneID);
-  TopicMavrosIMU.push_back(*droneID);
-  TopicMavrosState.push_back(*droneID);
-  TopicMavrosBattery.push_back(*droneID);
-  TopicMavrosGPSHome.push_back(*droneID);
-  TopicGCSGPSHome.push_back(*droneID);
-  TopicVisionFeedback.push_back(*droneID);
+  TopicMavrosGPSPos += droneID;
+  TopicMavrosGPSGlobal += droneID;
+  TopicVisionPayload += droneID;  // TO DO
+  TopicPx4CommandDroneState += droneID;
+  TopicMavrosIMU += droneID;
+  TopicMavrosState += droneID;
+  TopicMavrosBattery += droneID;
+  TopicMavrosGPSHome += droneID;
+  TopicGCSGPSHome += droneID;
+  TopicVisionFeedback += droneID;
   // add topic names to topic strings
   TopicMavrosGPSPos += "/mavros/global_position/local";
   TopicMavrosGPSGlobal += "/mavros/global_position/global";

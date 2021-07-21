@@ -37,12 +37,6 @@
 #include <iostream>
 
 using namespace std;
-struct SubTopic {
-  char str[100];
-};
-struct PubTopic {
-  char str[100];
-};
 px4_command::DroneState _DroneState;
 px4_command::Mocap UAV_motion;
 px4_command::Mocap Payload_motion;
@@ -106,66 +100,66 @@ int main(int argc, char** argv) {
   ros::Rate rate(50.0);
 
   /*----------- determine the  ID of the drone -----------------------------*/
-  SubTopic mocap_UAV;
-  SubTopic mavros_state;
-  SubTopic mavros_imu_data;
-  SubTopic mavros_battery;
-  PubTopic px4_command_drone_state;
-  PubTopic mavros_vision_pose_pose;
+  std::string mocap_UAV;
+  std::string mavros_state;
+  std::string mavros_imu_data;
+  std::string mavros_battery;
+  std::string px4_command_drone_state;
+  std::string mavros_vision_pose_pose;
   // add preflex: (mavros and px4_command use lower case uav, while mocap use upper case UAV)
-  strcpy(mocap_UAV.str, "/mocap/UAV");
-  strcpy(mavros_state.str, "/uav");
-  strcpy(mavros_imu_data.str, "/uav");
-  strcpy(px4_command_drone_state.str, "/uav");
-  strcpy(mavros_vision_pose_pose.str, "/uav");
-  strcpy(mavros_battery.str, "/uav");
+  mocap_UAV = "/mocap/UAV";
+  mavros_state = "/uav";
+  mavros_imu_data = "/uav";
+  px4_command_drone_state = "/uav";
+  mavros_vision_pose_pose = "/uav";
+  mavros_battery = "/uav";
   if (argc > 1) {
     // if ID is specified as the second argument
-    strcat(mocap_UAV.str, argv[1]);
-    strcat(mavros_state.str, argv[1]);
-    strcat(mavros_imu_data.str, argv[1]);
-    strcat(mavros_battery.str, argv[1]);
-    strcat(px4_command_drone_state.str, argv[1]);
-    strcat(mavros_vision_pose_pose.str, argv[1]);
+    mocap_UAV += argv[1];
+    mavros_state += argv[1];
+    mavros_imu_data += argv[1];
+    mavros_battery += argv[1];
+    px4_command_drone_state += argv[1];
+    mavros_vision_pose_pose += argv[1];
     ROS_INFO("UAV ID specified as: UAV%s", argv[1]);
   } else {
     // if ID is not specified, then set the drone to UAV0
-    strcat(mocap_UAV.str, "0");
-    strcat(mavros_state.str, "0");
-    strcat(mavros_imu_data.str, "0");
-    strcat(px4_command_drone_state.str, "0");
-    strcat(mavros_vision_pose_pose.str, "0");
-    strcat(mavros_battery.str, "0");
+    mocap_UAV += "0";
+    mavros_state += "0";
+    mavros_imu_data += "0";
+    px4_command_drone_state += "0";
+    mavros_vision_pose_pose += "0";
+    mavros_battery += "0";
     ROS_WARN("NO UAV ID specified, set ID to 0.");
   }
 
-  strcat(mavros_state.str, "/mavros/state");
-  strcat(mavros_imu_data.str, "/mavros/imu/data");
-  strcat(px4_command_drone_state.str, "/px4_command/drone_state");
-  strcat(mavros_vision_pose_pose.str, "/mavros/vision_pose/pose");
-  strcat(mavros_battery.str, "/mavros/battery");
+  mavros_state += "/mavros/state";
+  mavros_imu_data += "/mavros/imu/data";
+  px4_command_drone_state += "/px4_command/drone_state";
+  mavros_vision_pose_pose += "/mavros/vision_pose/pose";
+  mavros_battery += "/mavros/battery";
 
-  ROS_INFO("Subscribe uav Mocap from: %s", mocap_UAV.str);
+  ROS_INFO("Subscribe uav Mocap from: %s", mocap_UAV.c_str());
   ROS_INFO("Subscribe payload from: /mocap/Payload");
-  ROS_INFO("Subscribe mavros_msgs::State from: %s", mavros_state.str);
-  ROS_INFO("Subscribe IMU from: %s", mavros_imu_data.str);
-  ROS_INFO("Subscribe battery info from: %s", mavros_battery.str);
-  ROS_INFO("Publish DroneState to: %s", px4_command_drone_state.str);
-  ROS_INFO("Publish PoseStamped to: %s", mavros_vision_pose_pose.str);
+  ROS_INFO("Subscribe mavros_msgs::State from: %s", mavros_state.c_str());
+  ROS_INFO("Subscribe IMU from: %s", mavros_imu_data.c_str());
+  ROS_INFO("Subscribe battery info from: %s", mavros_battery.c_str());
+  ROS_INFO("Publish DroneState to: %s", px4_command_drone_state.c_str());
+  ROS_INFO("Publish PoseStamped to: %s", mavros_vision_pose_pose.c_str());
 
   // subscriber
-  ros::Subscriber UAV_motion_sub = nh.subscribe<px4_command::Mocap>(mocap_UAV.str, 1000, GetUAVState);
-  ros::Subscriber MavrosBattery_sub = nh.subscribe<sensor_msgs::BatteryState>(mavros_battery.str, 1000, GetUAVBattery);
+  ros::Subscriber UAV_motion_sub = nh.subscribe<px4_command::Mocap>(mocap_UAV, 1000, GetUAVState);
+  ros::Subscriber MavrosBattery_sub = nh.subscribe<sensor_msgs::BatteryState>(mavros_battery, 1000, GetUAVBattery);
   ros::Subscriber Payload_motion_sub = nh.subscribe<px4_command::Mocap>("/mocap/Payload", 1000, GetPayloadState);
-  ros::Subscriber MavrosState_sub = nh.subscribe<mavros_msgs::State>(mavros_state.str, 100, GetMavrosState);
-  ros::Subscriber Attitude_sub = nh.subscribe<sensor_msgs::Imu>(mavros_imu_data.str, 100, GetAttitude);
+  ros::Subscriber MavrosState_sub = nh.subscribe<mavros_msgs::State>(mavros_state, 100, GetMavrosState);
+  ros::Subscriber Attitude_sub = nh.subscribe<sensor_msgs::Imu>(mavros_imu_data, 100, GetAttitude);
   // publisher
-  ros::Publisher drone_state_pub = nh.advertise<px4_command::DroneState>(px4_command_drone_state.str, 100);
+  ros::Publisher drone_state_pub = nh.advertise<px4_command::DroneState>(px4_command_drone_state, 100);
   /*【发布】无人机位置和偏航角 坐标系 ENU系
   本话题要发送飞控(通过mavros_extras/src/plugins/vision_pose_estimate.cpp发送),
   对应Mavlink消息为VISION_POSITION_ESTIMATE(#??), 对应的飞控中的uORB消息为vehicle_vision_position.msg
   及 vehicle_vision_attitude.msg */
-  ros::Publisher vision_pub = nh.advertise<geometry_msgs::PoseStamped>(mavros_vision_pose_pose.str, 100);
+  ros::Publisher vision_pub = nh.advertise<geometry_msgs::PoseStamped>(mavros_vision_pose_pose, 100);
   geometry_msgs::PoseStamped vision;  // vision data
 
   const int MocapTolerance = 2;

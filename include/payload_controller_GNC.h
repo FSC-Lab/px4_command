@@ -21,7 +21,7 @@ using std::iostream;
 using std::string;
 class payload_controller_GNC {
  public:
-  payload_controller_GNC(char drone_ID[20], ros::NodeHandle& main_handle) {
+  payload_controller_GNC(const std::string& drone_ID, ros::NodeHandle& main_handle) {
     // use drone ID to get the correct name for parameters
     uav_pref = "uav";
     uav_pref = uav_pref + drone_ID[0];
