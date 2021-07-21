@@ -1,5 +1,5 @@
-float32 longitude 
-float32 latitude
-float32 altitude
+float64 longitude 
+float64 latitude
+float64 altitude
 ---
 bool  homeset_ok

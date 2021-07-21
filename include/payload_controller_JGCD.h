@@ -44,7 +44,7 @@ class payload_controller_JGCD {
   bool emergency_switch();
   // [Input: Current state, Reference state, sub_mode, dt; Output: AttitudeReference;
   px4_command::ControlOutput payload_controller(const px4_command::DroneState& _DroneState,
-                                                const px4_command::TrajectoryPoint& _Reference_State, float dt);
+                                                const px4_command::TrajectoryPoint& _Reference_State, double dt);
   // control command for main program
   px4_command::ControlOutput _ControlOutput;
 
@@ -54,7 +54,7 @@ class payload_controller_JGCD {
   void SendFleetStatus();
   void pubauxiliarystate();
   void send_parameter_to_ground_station();
-  Eigen::Matrix3f CalculateAuxiliaryE(const Eigen::Matrix3f& R);
+  Eigen::Matrix3d CalculateAuxiliaryE(const Eigen::Matrix3d& R);
   //------------- variables ---------------//
   ros::ServiceClient clientSendParameter;
   px4_command::ControlParameter ParamSrv;
@@ -72,82 +72,82 @@ class payload_controller_JGCD {
   trajectory::Rectangular_Trajectory_Parameter rect_param;
   trajectory::Rectangular_Trajectory rec_traj;
   // ggeo_fence
-  Eigen::Vector2f geo_fence_x;
-  Eigen::Vector2f geo_fence_y;
-  Eigen::Vector2f geo_fence_z;
+  Eigen::Vector2d geo_fence_x;
+  Eigen::Vector2d geo_fence_y;
+  Eigen::Vector2d geo_fence_z;
   // drone parameter:
   string uav_pref;
   experiment_drone::quadrotor_parameter drone_parameter;
   experiment_drone::quadrotor_drone drone;
   /* payload configuration parameters*/
   int num_drone;
-  float Payload_Mass;
-  float TotalLiftedMass;
-  float Cable_Length;
-  float Cable_Length_sq;
-  float Cable_Tolerance;
-  float MaximumInclination;
-  Eigen::Vector3f TetherOffset;
-  Eigen::Matrix3f TetherOffsetCross;
-  float PayloadSharingPortion;
-  Eigen::Matrix3f J_p;
+  double Payload_Mass;
+  double TotalLiftedMass;
+  double Cable_Length;
+  double Cable_Length_sq;
+  double Cable_Tolerance;
+  double MaximumInclination;
+  Eigen::Vector3d TetherOffset;
+  Eigen::Matrix3d TetherOffsetCross;
+  double PayloadSharingPortion;
+  Eigen::Matrix3d J_p;
   px4_command::AuxiliaryState Auxstate;
   // Controller parameter for the control law
-  Eigen::Matrix3f kv;
-  Eigen::Matrix3f kR;
-  Eigen::Matrix3f Kphi;
-  float kL;
-  Eigen::Matrix3f Ej;
-  Eigen::Matrix3f D;
+  Eigen::Matrix3d kv;
+  Eigen::Matrix3d kR;
+  Eigen::Matrix3d Kphi;
+  double kL;
+  Eigen::Matrix3d Ej;
+  Eigen::Matrix3d D;
   // command
   Eigen::Vector3d AttitudeTargetEuler;
   Eigen::Quaterniond AttitudeTargetQuaterniond;
-  Eigen::Vector4f AttitudeTargetQuaternionv;
-  Eigen::Vector4f AttitudeQuaternionv;
-  Eigen::Matrix3f R_IPd;
+  Eigen::Vector4d AttitudeTargetQuaternionv;
+  Eigen::Vector4d AttitudeQuaternionv;
+  Eigen::Matrix3d R_IPd;
   // disturbance estimation result:
-  Eigen::Vector3f PayloadDisturbance;
-  Eigen::Vector3f Delta_pt;
-  Eigen::Vector3f Delta_rt;
-  Eigen::Matrix3f lambda_j;
-  Eigen::Matrix2f BB_temp;
-  Eigen::Matrix2f BB_inverse;
-  Eigen::Matrix3f BB_j;  // estimator matrix
-  Eigen::Vector3f Delta_j;
-  Eigen::Vector3f Delta_j_p;
+  Eigen::Vector3d PayloadDisturbance;
+  Eigen::Vector3d Delta_pt;
+  Eigen::Vector3d Delta_rt;
+  Eigen::Matrix3d lambda_j;
+  Eigen::Matrix2d BB_temp;
+  Eigen::Matrix2d BB_inverse;
+  Eigen::Matrix3d BB_j;  // estimator matrix
+  Eigen::Vector3d Delta_j;
+  Eigen::Vector3d Delta_j_p;
   // payload state
-  Eigen::Vector3f Xp, Vp, Xj, Vj, Omega_p, Xpd;
-  Eigen::Matrix3f R_IP;
-  Eigen::Vector3f L_j_dot;  // rotation speed of the cable tip
-  Eigen::Vector3f L_j;      // the cable vector
-  Eigen::Vector2f r_j, v_j;
-  Eigen::Matrix<float, 3, 2> B_j, B_j_dot;
+  Eigen::Vector3d Xp, Vp, Xj, Vj, Omega_p, Xpd;
+  Eigen::Matrix3d R_IP;
+  Eigen::Vector3d L_j_dot;  // rotation speed of the cable tip
+  Eigen::Vector3d L_j;      // the cable vector
+  Eigen::Vector2d r_j, v_j;
+  Eigen::Matrix<double, 3, 2> B_j, B_j_dot;
   // virtural control force
-  Eigen::Vector3f accel_sp;
-  Eigen::Vector3f f_L_j;
-  Eigen::Vector3f f_p_j;
-  Eigen::Vector3f U;
-  Eigen::Vector3f u_l;
-  Eigen::Vector3f u_d;
+  Eigen::Vector3d accel_sp;
+  Eigen::Vector3d f_L_j;
+  Eigen::Vector3d f_p_j;
+  Eigen::Vector3d U;
+  Eigen::Vector3d u_l;
+  Eigen::Vector3d u_d;
   // additive MPC term from leader drone
-  Eigen::Vector2f rd_j, mu_j;
-  Eigen::Vector3f f_pj, f0_j, f_bj, f_cj;  // trim force and motion sync term
-  Eigen::Vector3f mpc_T, mpc_R;            // additive mpc term for payload translation and rotation
+  Eigen::Vector2d rd_j, mu_j;
+  Eigen::Vector3d f_pj, f0_j, f_bj, f_cj;  // trim force and motion sync term
+  Eigen::Vector3d mpc_T, mpc_R;            // additive mpc term for payload translation and rotation
   // error constraint parameters:
-  Eigen::Vector3f pos_error;
-  Eigen::Vector3f vel_error;
-  Eigen::Vector3f angle_error;
-  Eigen::Vector3f pos_error_max;
-  Eigen::Vector3f angular_error_max;
-  Eigen::Vector3f s_P;
-  Eigen::Vector3f s_R;
-  Eigen::Vector3f fp_max;
+  Eigen::Vector3d pos_error;
+  Eigen::Vector3d vel_error;
+  Eigen::Vector3d angle_error;
+  Eigen::Vector3d pos_error_max;
+  Eigen::Vector3d angular_error_max;
+  Eigen::Vector3d s_P;
+  Eigen::Vector3d s_R;
+  Eigen::Vector3d fp_max;
   // some constants
-  Eigen::Matrix3f Identity;
-  Eigen::Matrix3f Identity_30;
-  Eigen::Matrix2f Identity2D;
-  Eigen::Vector3f g_I;
-  Eigen::Vector3f e_3;
+  Eigen::Matrix3d Identity;
+  Eigen::Matrix3d Identity_30;
+  Eigen::Matrix2d Identity2D;
+  Eigen::Vector3d g_I;
+  Eigen::Vector3d e_3;
 };
 
 payload_controller_JGCD::payload_controller_JGCD(const std::string& drone_ID, ros::NodeHandle& main_handle) {
@@ -156,16 +156,16 @@ payload_controller_JGCD::payload_controller_JGCD(const std::string& drone_ID, ro
   uav_pref = uav_pref + drone_ID[0];
   drone_parameter.uav_name = uav_pref;
   // load uav and payload parameters
-  main_handle.param<float>(uav_pref + "_Pos_GNC/mass", drone_parameter.Quad_MASS, 1.0);
-  main_handle.param<float>(uav_pref + "_Pos_GNC/cablelength", Cable_Length, 1.0);
+  main_handle.param<double>(uav_pref + "_Pos_GNC/mass", drone_parameter.Quad_MASS, 1.0);
+  main_handle.param<double>(uav_pref + "_Pos_GNC/cablelength", Cable_Length, 1.0);
   main_handle.param<int>("Pos_JGCD/num_drone", num_drone, 1);
-  main_handle.param<float>(uav_pref + "_Pos_GNC/TetherOffset_x", TetherOffset(math_utils::Vector_X), 0.5);
-  main_handle.param<float>(uav_pref + "_Pos_GNC/TetherOffset_y", TetherOffset(math_utils::Vector_Y), 0);
-  main_handle.param<float>(uav_pref + "_Pos_GNC/TetherOffset_z", TetherOffset(math_utils::Vector_Z), 0);
+  main_handle.param<double>(uav_pref + "_Pos_GNC/TetherOffset_x", TetherOffset(math_utils::Vector_X), 0.5);
+  main_handle.param<double>(uav_pref + "_Pos_GNC/TetherOffset_y", TetherOffset(math_utils::Vector_Y), 0);
+  main_handle.param<double>(uav_pref + "_Pos_GNC/TetherOffset_z", TetherOffset(math_utils::Vector_Z), 0);
   main_handle.param<double>(uav_pref + "_Pos_GNC/motor_slope", drone_parameter.liftmodel.motor_slope, 0.3);
   main_handle.param<double>(uav_pref + "_Pos_GNC/motor_intercept", drone_parameter.liftmodel.motor_intercept, 0.0);
-  main_handle.param<float>(uav_pref + "_Pos_GNC/PayloadSharingPortion", PayloadSharingPortion, 0.5);
-  main_handle.param<float>("Payload/mass", Payload_Mass, 1.0);
+  main_handle.param<double>(uav_pref + "_Pos_GNC/PayloadSharingPortion", PayloadSharingPortion, 0.5);
+  main_handle.param<double>("Payload/mass", Payload_Mass, 1.0);
   main_handle.param<bool>("Pos_JGCD/PubAuxiliaryState", isPubAuxiliaryState, true);
   // set the estimated payload moment of inertia
   J_p.setZero();
@@ -174,16 +174,16 @@ payload_controller_JGCD::payload_controller_JGCD(const std::string& drone_ID, ro
   J_p(2, 2) = 0.1;
   TetherOffsetCross = Hatmap(TetherOffset);
   D.setZero();
-  Eigen::Vector3f temp_offset;
-  float e_n = 1.0;
-  float a_j;
+  Eigen::Vector3d temp_offset;
+  double e_n = 1.0;
+  double a_j;
   for (int i = 0; i < num_drone; i++) {
     temp_offset.setZero();
     a_j = 0;
-    main_handle.param<float>("uav" + to_string(i) + "_Pos_GNC/ayloadSharingPortion", a_j, 0.5);
-    main_handle.param<float>("uav" + to_string(i) + "_Pos_GNC/TetherOffset_x", temp_offset(math_utils::Vector_X), 0.5);
-    main_handle.param<float>("uav" + to_string(i) + "_Pos_GNC/TetherOffset_y", temp_offset(math_utils::Vector_Y), 0);
-    main_handle.param<float>("uav" + to_string(i) + "_Pos_GNC/TetherOffset_z", temp_offset(math_utils::Vector_Z), 0);
+    main_handle.param<double>("uav" + to_string(i) + "_Pos_GNC/ayloadSharingPortion", a_j, 0.5);
+    main_handle.param<double>("uav" + to_string(i) + "_Pos_GNC/TetherOffset_x", temp_offset(math_utils::Vector_X), 0.5);
+    main_handle.param<double>("uav" + to_string(i) + "_Pos_GNC/TetherOffset_y", temp_offset(math_utils::Vector_Y), 0);
+    main_handle.param<double>("uav" + to_string(i) + "_Pos_GNC/TetherOffset_z", temp_offset(math_utils::Vector_Z), 0);
     D += a_j * Hatmap(temp_offset) * Hatmap(temp_offset);
     e_n *= temp_offset.norm();
   }
@@ -197,39 +197,39 @@ payload_controller_JGCD::payload_controller_JGCD(const std::string& drone_ID, ro
   kv.setZero();
   kR.setZero();
 
-  main_handle.param<float>("Pos_JGCD/kv_xy", kv(math_utils::Vector_X, math_utils::Vector_X), 0.2);
-  main_handle.param<float>("Pos_JGCD/kv_xy", kv(math_utils::Vector_Y, math_utils::Vector_Y), 0.2);
-  main_handle.param<float>("Pos_JGCD/Kv_z", kv(math_utils::Vector_Z, math_utils::Vector_Z), 0.4);
+  main_handle.param<double>("Pos_JGCD/kv_xy", kv(math_utils::Vector_X, math_utils::Vector_X), 0.2);
+  main_handle.param<double>("Pos_JGCD/kv_xy", kv(math_utils::Vector_Y, math_utils::Vector_Y), 0.2);
+  main_handle.param<double>("Pos_JGCD/Kv_z", kv(math_utils::Vector_Z, math_utils::Vector_Z), 0.4);
 
-  main_handle.param<float>("Pos_JGCD/kR_xy", kR(math_utils::Vector_X, math_utils::Vector_X), 0.2);
-  main_handle.param<float>("Pos_JGCD/kR_xy", kR(math_utils::Vector_Y, math_utils::Vector_Y), 0.2);
-  main_handle.param<float>("Pos_JGCD/kR_z", kR(math_utils::Vector_Z, math_utils::Vector_Z), 0.4);
+  main_handle.param<double>("Pos_JGCD/kR_xy", kR(math_utils::Vector_X, math_utils::Vector_X), 0.2);
+  main_handle.param<double>("Pos_JGCD/kR_xy", kR(math_utils::Vector_Y, math_utils::Vector_Y), 0.2);
+  main_handle.param<double>("Pos_JGCD/kR_z", kR(math_utils::Vector_Z, math_utils::Vector_Z), 0.4);
 
-  main_handle.param<float>("Pos_JGCD/kL", kL, 0.5);
+  main_handle.param<double>("Pos_JGCD/kL", kL, 0.5);
 
-  main_handle.param<float>("Limit/pxy_error_max", pos_error_max[math_utils::Vector_X], 0.6);
-  main_handle.param<float>("Limit/pxy_error_max", pos_error_max[math_utils::Vector_Y], 0.6);
-  main_handle.param<float>("Limit/pz_error_max", pos_error_max[math_utils::Vector_Z], 1.0);
+  main_handle.param<double>("Limit/pxy_error_max", pos_error_max[math_utils::Vector_X], 0.6);
+  main_handle.param<double>("Limit/pxy_error_max", pos_error_max[math_utils::Vector_Y], 0.6);
+  main_handle.param<double>("Limit/pz_error_max", pos_error_max[math_utils::Vector_Z], 1.0);
 
-  main_handle.param<float>("Limit/tilt_max", drone_parameter.tiltlimit, 20.0);
+  main_handle.param<double>("Limit/tilt_max", drone_parameter.tiltlimit, 20.0);
 
-  main_handle.param<float>("Pos_JGCD/fp_max_x", fp_max(math_utils::Vector_X), 1);
-  main_handle.param<float>("Pos_JGCD/fp_max_y", fp_max(math_utils::Vector_Y), 1);
-  main_handle.param<float>("Pos_JGCD/fp_max_z", fp_max(math_utils::Vector_Z), 1);
+  main_handle.param<double>("Pos_JGCD/fp_max_x", fp_max(math_utils::Vector_X), 1);
+  main_handle.param<double>("Pos_JGCD/fp_max_y", fp_max(math_utils::Vector_Y), 1);
+  main_handle.param<double>("Pos_JGCD/fp_max_z", fp_max(math_utils::Vector_Z), 1);
 
-  main_handle.param<float>("Pos_JGCD/MaxInclination", MaximumInclination, 40.0);
-  main_handle.param<float>("Pos_JGCD/CableLengthTolerance", Cable_Tolerance, 1.2);
+  main_handle.param<double>("Pos_JGCD/MaxInclination", MaximumInclination, 40.0);
+  main_handle.param<double>("Pos_JGCD/CableLengthTolerance", Cable_Tolerance, 1.2);
 
   lambda_j.setZero();
 
-  main_handle.param<float>("Pos_JGCD/lambda_j", lambda_j(math_utils::Vector_X, math_utils::Vector_X), 1);
-  main_handle.param<float>("Pos_JGCD/lambda_j", lambda_j(math_utils::Vector_Y, math_utils::Vector_Y), 1);
-  main_handle.param<float>("Pos_JGCD/lambda_j", lambda_j(math_utils::Vector_Z, math_utils::Vector_Z), 1);
+  main_handle.param<double>("Pos_JGCD/lambda_j", lambda_j(math_utils::Vector_X, math_utils::Vector_X), 1);
+  main_handle.param<double>("Pos_JGCD/lambda_j", lambda_j(math_utils::Vector_Y, math_utils::Vector_Y), 1);
+  main_handle.param<double>("Pos_JGCD/lambda_j", lambda_j(math_utils::Vector_Z, math_utils::Vector_Z), 1);
 
   Kphi.setZero();
-  main_handle.param<float>("Pos_JGCD/Kphi_xy", Kphi(math_utils::Vector_X, math_utils::Vector_X), 0.0);
-  main_handle.param<float>("Pos_JGCD/Kphi_xy", Kphi(math_utils::Vector_Y, math_utils::Vector_Y), 0.0);
-  main_handle.param<float>("Pos_JGCD/Kphi_z", Kphi(math_utils::Vector_Z, math_utils::Vector_Z), 0.0);
+  main_handle.param<double>("Pos_JGCD/Kphi_xy", Kphi(math_utils::Vector_X, math_utils::Vector_X), 0.0);
+  main_handle.param<double>("Pos_JGCD/Kphi_xy", Kphi(math_utils::Vector_Y, math_utils::Vector_Y), 0.0);
+  main_handle.param<double>("Pos_JGCD/Kphi_z", Kphi(math_utils::Vector_Z, math_utils::Vector_Z), 0.0);
 
   // special parameters
   Identity.setIdentity();
@@ -268,39 +268,39 @@ payload_controller_JGCD::payload_controller_JGCD(const std::string& drone_ID, ro
   // load drone parameter
   drone.loadparameter(drone_parameter);
   // read the geo geo_fence
-  main_handle.param<float>("payload_geofence/x_min", geo_fence_x[math_utils::Vector_X], -0.6);
-  main_handle.param<float>("payload_geofence/x_max", geo_fence_x[math_utils::Vector_Y], 0.6);
-  main_handle.param<float>("payload_geofence/y_min", geo_fence_y[math_utils::Vector_X], -0.3);
-  main_handle.param<float>("payload_geofence/y_max", geo_fence_y[math_utils::Vector_Y], 0.3);
-  main_handle.param<float>("payload_geofence/z_min", geo_fence_z[math_utils::Vector_X], -0.05);
-  main_handle.param<float>("payload_geofence/z_max", geo_fence_z[math_utils::Vector_Y], 0.6);
+  main_handle.param<double>("payload_geofence/x_min", geo_fence_x[math_utils::Vector_X], -0.6);
+  main_handle.param<double>("payload_geofence/x_max", geo_fence_x[math_utils::Vector_Y], 0.6);
+  main_handle.param<double>("payload_geofence/y_min", geo_fence_y[math_utils::Vector_X], -0.3);
+  main_handle.param<double>("payload_geofence/y_max", geo_fence_y[math_utils::Vector_Y], 0.3);
+  main_handle.param<double>("payload_geofence/z_min", geo_fence_z[math_utils::Vector_X], -0.05);
+  main_handle.param<double>("payload_geofence/z_max", geo_fence_z[math_utils::Vector_Y], 0.6);
   // read the trajectory information
   main_handle.param<int>("ActionMode/type", type, 1);
   switch (type) {
     case 1: {
-      main_handle.param<float>("Rectangular_Trajectory/a_x", rect_param.a_x, 0.0);
-      main_handle.param<float>("Rectangular_Trajectory/a_y", rect_param.a_y, 0.0);
-      main_handle.param<float>("Rectangular_Trajectory/vel_x", rect_param.v_x, 0.0);
-      main_handle.param<float>("Rectangular_Trajectory/vel_y", rect_param.v_y, 0.0);
-      main_handle.param<float>("Rectangular_Trajectory/h", rect_param.h, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/a_x", rect_param.a_x, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/a_y", rect_param.a_y, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/vel_x", rect_param.v_x, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/vel_y", rect_param.v_y, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/h", rect_param.h, 0.0);
 
-      main_handle.param<float>("Rectangular_Trajectory/center_x", rect_param.center_x, 0.0);
-      main_handle.param<float>("Rectangular_Trajectory/center_y", rect_param.center_y, 0.0);
-      main_handle.param<float>("Rectangular_Trajectory/center_z", rect_param.center_z, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/center_x", rect_param.center_x, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/center_y", rect_param.center_y, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/center_z", rect_param.center_z, 0.0);
 
       rec_traj.LoadParameter(rect_param);
       break;
     }
     default: {
-      main_handle.param<float>("Rectangular_Trajectory/a_x", rect_param.a_x, 0.0);
-      main_handle.param<float>("Rectangular_Trajectory/a_y", rect_param.a_y, 0.0);
-      main_handle.param<float>("Rectangular_Trajectory/vel_x", rect_param.v_x, 0.0);
-      main_handle.param<float>("Rectangular_Trajectory/vel_y", rect_param.v_y, 0.0);
-      main_handle.param<float>("Rectangular_Trajectory/h", rect_param.h, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/a_x", rect_param.a_x, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/a_y", rect_param.a_y, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/vel_x", rect_param.v_x, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/vel_y", rect_param.v_y, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/h", rect_param.h, 0.0);
 
-      main_handle.param<float>("Rectangular_Trajectory/center_x", rect_param.center_x, 0.0);
-      main_handle.param<float>("Rectangular_Trajectory/center_y", rect_param.center_y, 0.0);
-      main_handle.param<float>("Rectangular_Trajectory/center_z", rect_param.center_z, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/center_x", rect_param.center_x, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/center_y", rect_param.center_y, 0.0);
+      main_handle.param<double>("Rectangular_Trajectory/center_z", rect_param.center_z, 0.0);
 
       rec_traj.LoadParameter(rect_param);
       break;
@@ -325,16 +325,16 @@ void payload_controller_JGCD::ros_topic_setup(ros::NodeHandle& main_handle) {
 }
 
 px4_command::ControlOutput payload_controller_JGCD::payload_controller(
-    const px4_command::DroneState& _DroneState, const px4_command::TrajectoryPoint& _Reference_State, float dt) {
+    const px4_command::DroneState& _DroneState, const px4_command::TrajectoryPoint& _Reference_State, double dt) {
   /* step 1: get command attitude and payload attitude*/
   AttitudeTargetEuler(0) = (double)_Reference_State.roll_ref;
   AttitudeTargetEuler(1) = (double)_Reference_State.pitch_ref;
   AttitudeTargetEuler(2) = (double)_Reference_State.yaw_ref;
   AttitudeTargetQuaterniond = quaternion_from_rpy(AttitudeTargetEuler);
-  AttitudeTargetQuaternionv(0) = (float)AttitudeTargetQuaterniond.w();
-  AttitudeTargetQuaternionv(1) = (float)AttitudeTargetQuaterniond.x();
-  AttitudeTargetQuaternionv(2) = (float)AttitudeTargetQuaterniond.y();
-  AttitudeTargetQuaternionv(3) = (float)AttitudeTargetQuaterniond.z();
+  AttitudeTargetQuaternionv(0) = (double)AttitudeTargetQuaterniond.w();
+  AttitudeTargetQuaternionv(1) = (double)AttitudeTargetQuaterniond.x();
+  AttitudeTargetQuaternionv(2) = (double)AttitudeTargetQuaterniond.y();
+  AttitudeTargetQuaternionv(3) = (double)AttitudeTargetQuaterniond.z();
   R_IPd = QuaterionToRotationMatrix(AttitudeTargetQuaternionv);
   // get the payload rotation matrix
   for (int i = 0; i < 4; i++) {
@@ -362,7 +362,7 @@ px4_command::ControlOutput payload_controller_JGCD::payload_controller(
   v_j(0) = L_j_dot(0);
   v_j(1) = L_j_dot(1);
 
-  float sq_r = r_j(0) * r_j(0) + r_j(1) * r_j(1);
+  double sq_r = r_j(0) * r_j(0) + r_j(1) * r_j(1);
 
   if (Cable_Length_sq - sq_r > 0.01) {
     B_j(2, 0) = -r_j(0) / sqrt((Cable_Length_sq - sq_r));
@@ -376,7 +376,7 @@ px4_command::ControlOutput payload_controller_JGCD::payload_controller(
                    pow(sqrt((Cable_Length_sq - sq_r)), 3);
 
   BB_temp = B_j.transpose() * B_j;
-  float BB_determinent = BB_temp(0, 0) * BB_temp(1, 1) - BB_temp(0, 1) * BB_temp(1, 0);
+  double BB_determinent = BB_temp(0, 0) * BB_temp(1, 1) - BB_temp(0, 1) * BB_temp(1, 0);
   BB_inverse(0, 0) = BB_temp(1, 1);
   BB_inverse(1, 1) = BB_temp(0, 0);
   BB_inverse(0, 1) = -BB_temp(0, 1);
@@ -408,7 +408,7 @@ px4_command::ControlOutput payload_controller_JGCD::payload_controller(
     vel_error = Vp;  // position stabilization
   }
 
-  float scale_p = sqrt(1 + pos_error.transpose() * pos_error);
+  double scale_p = sqrt(1 + pos_error.transpose() * pos_error);
   pos_error = pos_error / scale_p;
   s_P = vel_error + kv * pos_error;
 
@@ -442,7 +442,7 @@ px4_command::ControlOutput payload_controller_JGCD::payload_controller(
   accel_sp[math_utils::Vector_X] = u_l[math_utils::Vector_X] - u_d[math_utils::Vector_X];
   accel_sp[math_utils::Vector_Y] = u_l[math_utils::Vector_Y] - u_d[math_utils::Vector_Y];
   accel_sp[math_utils::Vector_Z] = u_l[math_utils::Vector_Z] - u_d[math_utils::Vector_Z] + 9.81;
-  Eigen::Vector3f temp_F = TotalLiftedMass * accel_sp;
+  Eigen::Vector3d temp_F = TotalLiftedMass * accel_sp;
   f_L_j = temp_F.norm() * (drone.getProcessedIMU().R_Ij * e_3);
   // update the required thrust
   _ControlOutput = drone.outputdronecommand(accel_sp, TotalLiftedMass, u_l, u_d);
@@ -453,7 +453,7 @@ px4_command::ControlOutput payload_controller_JGCD::payload_controller(
   return _ControlOutput;
 }
 
-Eigen::Matrix3f payload_controller_JGCD::CalculateAuxiliaryE(const Eigen::Matrix3f& R) {
+Eigen::Matrix3d payload_controller_JGCD::CalculateAuxiliaryE(const Eigen::Matrix3d& R) {
   return 0.5 * (R.trace() * Identity - R);
 }
 
@@ -568,8 +568,8 @@ void payload_controller_JGCD::send_parameter_to_ground_station() {
   ParamSrv.request.a_j = PayloadSharingPortion;
   ParamSrv.request.payloadmass = Payload_Mass;
   ParamSrv.request.num_drone = num_drone;
-  ParamSrv.request.motor_slope = (float)drone_parameter.liftmodel.motor_slope;
-  ParamSrv.request.motor_intercept = (float)drone_parameter.liftmodel.motor_intercept;
+  ParamSrv.request.motor_slope = (double)drone_parameter.liftmodel.motor_slope;
+  ParamSrv.request.motor_intercept = (double)drone_parameter.liftmodel.motor_intercept;
   ParamSrv.request.isPubAuxiliaryState = isPubAuxiliaryState;
   ParamSrv.request.isAddonForcedUsed = true;
   ParamSrv.request.isCrossFeedingTermsUsed = false;
@@ -595,12 +595,12 @@ void payload_controller_JGCD::send_parameter_to_ground_station() {
   ParamSrv.request.lambdaj_z = lambda_j(math_utils::Vector_Z, math_utils::Vector_Z);
   if (uav_pref.compare("uav0") == 0) {
     ros::NodeHandle main_handle("~");
-    main_handle.param<float>("Pos_JGCD/lambda_Txy", ParamSrv.request.lambda_T_x, 0.0);
-    main_handle.param<float>("Pos_JGCD/lambda_Txy", ParamSrv.request.lambda_T_y, 0.0);
-    main_handle.param<float>("Pos_JGCD/lambda_Tz", ParamSrv.request.lambda_T_z, 0.0);
-    main_handle.param<float>("Pos_JGCD/lambda_Rxy", ParamSrv.request.lambda_R_x, 0.0);
-    main_handle.param<float>("Pos_JGCD/lambda_Rxy", ParamSrv.request.lambda_R_y, 0.0);
-    main_handle.param<float>("Pos_JGCD/lambda_Rz", ParamSrv.request.lambda_R_z, 0.0);
+    main_handle.param<double>("Pos_JGCD/lambda_Txy", ParamSrv.request.lambda_T_x, 0.0);
+    main_handle.param<double>("Pos_JGCD/lambda_Txy", ParamSrv.request.lambda_T_y, 0.0);
+    main_handle.param<double>("Pos_JGCD/lambda_Tz", ParamSrv.request.lambda_T_z, 0.0);
+    main_handle.param<double>("Pos_JGCD/lambda_Rxy", ParamSrv.request.lambda_R_x, 0.0);
+    main_handle.param<double>("Pos_JGCD/lambda_Rxy", ParamSrv.request.lambda_R_y, 0.0);
+    main_handle.param<double>("Pos_JGCD/lambda_Rz", ParamSrv.request.lambda_R_z, 0.0);
   }
 
   ParamSrv.request.lambda1_x = 0.0;
@@ -626,8 +626,8 @@ void payload_controller_JGCD::send_parameter_to_ground_station() {
   // call the ground station to recieve the parameters and waiting for connection....
   bool isresponserecieved = false;
   ros::Time begin_time = ros::Time::now();
-  float last_time = px4_command_utils::get_time_in_sec(begin_time);
-  float cur_time = last_time;
+  double last_time = px4_command_utils::get_time_in_sec(begin_time);
+  double cur_time = last_time;
   while (!isresponserecieved) {
     // very 3 seconds, send a parameter service call to the ground station.
     cur_time = px4_command_utils::get_time_in_sec(begin_time);

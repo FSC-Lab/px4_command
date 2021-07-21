@@ -4,11 +4,11 @@ std_msgs/Header header
 uint32 Command_ID
 
 ## Payload Pose Setpoint
-float32    x_ref         ## [m]
-float32    y_ref         ## [m]
-float32    z_ref         ## [m]
-float32    roll_ref      ## [deg]
-float32    pitch_ref     ## [deg]
-float32    yaw_ref       ## [deg]
+float64    x_ref         ## [m]
+float64    y_ref         ## [m]
+float64    z_ref         ## [m]
+float64    roll_ref      ## [deg]
+float64    pitch_ref     ## [deg]
+float64    yaw_ref       ## [deg]
 
 

@@ -36,17 +36,17 @@ class pos_controller_TIE {
     // use drone ID to get the correct name for parameters
     uav_pref = "uav";
     uav_pref = uav_pref + drone_ID[0];
-    main_handle.param<float>("Pos_tie/quadrotor_mass", Quad_MASS, 1.0);
-    main_handle.param<float>("Pos_tie/payload_mass", Payload_Mass, 0.5);
-    main_handle.param<float>("Pos_tie/cablelength", Cable_Length, 1.0);
+    main_handle.param<double>("Pos_tie/quadrotor_mass", Quad_MASS, 1.0);
+    main_handle.param<double>("Pos_tie/payload_mass", Payload_Mass, 0.5);
+    main_handle.param<double>("Pos_tie/cablelength", Cable_Length, 1.0);
     main_handle.param<double>("Pos_tie/motor_slope", motor_slope, 0.3);
     main_handle.param<double>("Pos_tie/motor_intercept", motor_intercept, 0);
 
     T_tie.setZero();
     Lambda.setZero();
-    main_handle.param<float>("Pos_tie/T_tie_xy", T_tie(0, 0), 1.0);
-    main_handle.param<float>("Pos_tie/T_tie_xy", T_tie(1, 1), 1.0);
-    main_handle.param<float>("Pos_tie/T_tie_z", T_tie(2, 2), 1.0);
+    main_handle.param<double>("Pos_tie/T_tie_xy", T_tie(0, 0), 1.0);
+    main_handle.param<double>("Pos_tie/T_tie_xy", T_tie(1, 1), 1.0);
+    main_handle.param<double>("Pos_tie/T_tie_z", T_tie(2, 2), 1.0);
 
     Lambda(0, 0) = 1 / T_tie(0, 0);
     Lambda(1, 1) = 1 / T_tie(1, 1);
@@ -60,76 +60,76 @@ class pos_controller_TIE {
     Kv.setZero();
     Kpv.setZero();
 
-    main_handle.param<float>("Pos_tie/Kp_xy", Kp(0, 0), 1.0);
-    main_handle.param<float>("Pos_tie/Kp_xy", Kp(1, 1), 1.0);
-    main_handle.param<float>("Pos_tie/Kp_z", Kp(2, 2), 2.0);
+    main_handle.param<double>("Pos_tie/Kp_xy", Kp(0, 0), 1.0);
+    main_handle.param<double>("Pos_tie/Kp_xy", Kp(1, 1), 1.0);
+    main_handle.param<double>("Pos_tie/Kp_z", Kp(2, 2), 2.0);
 
-    main_handle.param<float>("Pos_tie/Kv_xy", Kv(0, 0), 0.5);
-    main_handle.param<float>("Pos_tie/Kv_xy", Kv(1, 1), 0.5);
-    main_handle.param<float>("Pos_tie/Kv_z", Kv(2, 2), 0.5);
+    main_handle.param<double>("Pos_tie/Kv_xy", Kv(0, 0), 0.5);
+    main_handle.param<double>("Pos_tie/Kv_xy", Kv(1, 1), 0.5);
+    main_handle.param<double>("Pos_tie/Kv_z", Kv(2, 2), 0.5);
 
-    main_handle.param<float>("Pos_tie/Kpv_xy", Kpv(0, 0), 0.0);
-    main_handle.param<float>("Pos_tie/Kpv_xy", Kpv(1, 1), 0.0);
-    main_handle.param<float>("Pos_tie/Kpv_z", Kpv(2, 2), 0.0);
+    main_handle.param<double>("Pos_tie/Kpv_xy", Kpv(0, 0), 0.0);
+    main_handle.param<double>("Pos_tie/Kpv_xy", Kpv(1, 1), 0.0);
+    main_handle.param<double>("Pos_tie/Kpv_z", Kpv(2, 2), 0.0);
 
-    main_handle.param<float>("Pos_tie/KL", KL, 0.0);
+    main_handle.param<double>("Pos_tie/KL", KL, 0.0);
 
-    main_handle.param<float>("Limitne/pxy_error_max", pos_error_max[0], 0.6);
-    main_handle.param<float>("Limitne/pxy_error_max", pos_error_max[1], 0.6);
-    main_handle.param<float>("Limit/pz_error_max", pos_error_max[2], 1.0);
-    main_handle.param<float>("Limit/vxy_error_max", vel_error_max[0], 0.3);
-    main_handle.param<float>("Limit/vxy_error_max", vel_error_max[1], 0.3);
-    main_handle.param<float>("Limit/vz_error_max", vel_error_max[2], 1.0);
+    main_handle.param<double>("Limitne/pxy_error_max", pos_error_max[0], 0.6);
+    main_handle.param<double>("Limitne/pxy_error_max", pos_error_max[1], 0.6);
+    main_handle.param<double>("Limit/pz_error_max", pos_error_max[2], 1.0);
+    main_handle.param<double>("Limit/vxy_error_max", vel_error_max[0], 0.3);
+    main_handle.param<double>("Limit/vxy_error_max", vel_error_max[1], 0.3);
+    main_handle.param<double>("Limit/vz_error_max", vel_error_max[2], 1.0);
 
-    Eigen::Vector3f int_max_temp;
+    Eigen::Vector3d int_max_temp;
 
-    main_handle.param<float>("Limit/pxy_int_max", int_max_temp(0), 0.5);
-    main_handle.param<float>("Limit/pxy_int_max", int_max_temp(1), 0.5);
-    main_handle.param<float>("Limit/pz_int_max", int_max_temp(2), 0.5);
+    main_handle.param<double>("Limit/pxy_int_max", int_max_temp(0), 0.5);
+    main_handle.param<double>("Limit/pxy_int_max", int_max_temp(1), 0.5);
+    main_handle.param<double>("Limit/pz_int_max", int_max_temp(2), 0.5);
 
     int_max = int_max_temp.norm();
 
-    main_handle.param<float>("Limit/tilt_max", tilt_max, 20.0);
-    main_handle.param<float>("Limit/int_start_error", int_start_error, 0.3);
+    main_handle.param<double>("Limit/tilt_max", tilt_max, 20.0);
+    main_handle.param<double>("Limit/int_start_error", int_start_error, 0.3);
 
     // read the drone geo fence data
-    main_handle.param<float>("DroneGeoFence/x_min", geo_fence_x[0], -1.2);
-    main_handle.param<float>("DroneGeoFence/x_max", geo_fence_x[1], 1.2);
-    main_handle.param<float>("DroneGeoFence/y_min", geo_fence_y[0], -0.9);
-    main_handle.param<float>("DroneGeoFence/y_max", geo_fence_y[1], 0.9);
-    main_handle.param<float>("DroneGeoFence/z_min", geo_fence_z[0], 0.2);
-    main_handle.param<float>("DroneGeoFence/z_max", geo_fence_z[1], 2);
+    main_handle.param<double>("DroneGeoFence/x_min", geo_fence_x[0], -1.2);
+    main_handle.param<double>("DroneGeoFence/x_max", geo_fence_x[1], 1.2);
+    main_handle.param<double>("DroneGeoFence/y_min", geo_fence_y[0], -0.9);
+    main_handle.param<double>("DroneGeoFence/y_max", geo_fence_y[1], 0.9);
+    main_handle.param<double>("DroneGeoFence/z_min", geo_fence_z[0], 0.2);
+    main_handle.param<double>("DroneGeoFence/z_max", geo_fence_z[1], 2);
     // read the trajectory information
     main_handle.param<int>("ActionMode/type", type, 0);
 
     switch (type) {
       case 0: {
-        main_handle.param<float>("Circle_Trajectory/Center_x", Center(0), 0.0);
-        main_handle.param<float>("Circle_Trajectory/Center_y", Center(1), 0.0);
-        main_handle.param<float>("Circle_Trajectory/Center_z", Center(2), 1.0);
-        main_handle.param<float>("Circle_Trajectory/radius", radius, 0.3);
-        main_handle.param<float>("Circle_Trajectory/linear_vel", vd, 0.3);
+        main_handle.param<double>("Circle_Trajectory/Center_x", Center(0), 0.0);
+        main_handle.param<double>("Circle_Trajectory/Center_y", Center(1), 0.0);
+        main_handle.param<double>("Circle_Trajectory/Center_z", Center(2), 1.0);
+        main_handle.param<double>("Circle_Trajectory/radius", radius, 0.3);
+        main_handle.param<double>("Circle_Trajectory/linear_vel", vd, 0.3);
         break;
       }
       case 1: {
-        main_handle.param<float>("Rectangular_Trajectory/a_x", rect_param.a_x, 0.0);
-        main_handle.param<float>("Rectangular_Trajectory/a_y", rect_param.a_y, 0.0);
-        main_handle.param<float>("Rectangular_Trajectory/vel_x", rect_param.v_x, 0.0);
-        main_handle.param<float>("Rectangular_Trajectory/vel_y", rect_param.v_y, 0.0);
-        main_handle.param<float>("Rectangular_Trajectory/h", rect_param.h, 0.0);
-        main_handle.param<float>("Rectangular_Trajectory/center_x", rect_param.center_x, 0.0);
-        main_handle.param<float>("Rectangular_Trajectory/center_y", rect_param.center_y, 0.0);
-        main_handle.param<float>("Rectangular_Trajectory/center_z", rect_param.center_z, 0.0);
+        main_handle.param<double>("Rectangular_Trajectory/a_x", rect_param.a_x, 0.0);
+        main_handle.param<double>("Rectangular_Trajectory/a_y", rect_param.a_y, 0.0);
+        main_handle.param<double>("Rectangular_Trajectory/vel_x", rect_param.v_x, 0.0);
+        main_handle.param<double>("Rectangular_Trajectory/vel_y", rect_param.v_y, 0.0);
+        main_handle.param<double>("Rectangular_Trajectory/h", rect_param.h, 0.0);
+        main_handle.param<double>("Rectangular_Trajectory/center_x", rect_param.center_x, 0.0);
+        main_handle.param<double>("Rectangular_Trajectory/center_y", rect_param.center_y, 0.0);
+        main_handle.param<double>("Rectangular_Trajectory/center_z", rect_param.center_z, 0.0);
         rec_traj.LoadParameter(rect_param);
 
         break;
       }
       default: {
-        main_handle.param<float>("Circle_Trajectory/Center_x", Center(0), 0.0);
-        main_handle.param<float>("Circle_Trajectory/Center_y", Center(1), 0.0);
-        main_handle.param<float>("Circle_Trajectory/Center_z", Center(2), 1.0);
-        main_handle.param<float>("Circle_Trajectory/radius", radius, 0.3);
-        main_handle.param<float>("Circle_Trajectory/linear_vel", vd, 0.3);
+        main_handle.param<double>("Circle_Trajectory/Center_x", Center(0), 0.0);
+        main_handle.param<double>("Circle_Trajectory/Center_y", Center(1), 0.0);
+        main_handle.param<double>("Circle_Trajectory/Center_z", Center(2), 1.0);
+        main_handle.param<double>("Circle_Trajectory/radius", radius, 0.3);
+        main_handle.param<double>("Circle_Trajectory/linear_vel", vd, 0.3);
         break;
       }
     }
@@ -181,7 +181,7 @@ class pos_controller_TIE {
   void printf_result();
   bool emergency_switch();
   px4_command::ControlOutput pos_controller(const px4_command::DroneState& _DroneState,
-                                            const px4_command::TrajectoryPoint& _Reference_State, float dt);
+                                            const px4_command::TrajectoryPoint& _Reference_State, double dt);
   px4_command::ControlOutput _ControlOutput;
 
  private:
@@ -200,80 +200,80 @@ class pos_controller_TIE {
   bool isperformAction;
   // action info
   int type;
-  Eigen::Vector3f Center;
-  float radius;
-  float vd;
+  Eigen::Vector3d Center;
+  double radius;
+  double vd;
   trajectory::Reference_Path rect_path;
   trajectory::Rectangular_Trajectory_Parameter rect_param;
   trajectory::Rectangular_Trajectory rec_traj;
   // geo geo_fence
-  Eigen::Vector2f geo_fence_x;
-  Eigen::Vector2f geo_fence_y;
-  Eigen::Vector2f geo_fence_z;
+  Eigen::Vector2d geo_fence_x;
+  Eigen::Vector2d geo_fence_y;
+  Eigen::Vector2d geo_fence_z;
   // quadrotor and payload parameter
   string mode;
   string uav_pref;
-  float Quad_MASS;
-  float Payload_Mass;
-  float Cable_Length;
-  float Cable_Length_sq;
-  float TotalLiftingMass;
+  double Quad_MASS;
+  double Payload_Mass;
+  double Cable_Length;
+  double Cable_Length_sq;
+  double TotalLiftingMass;
   double motor_slope;
   double motor_intercept;
-  Eigen::Vector3f g_I;
-  Eigen::Vector3f unit_z;
+  Eigen::Vector3d g_I;
+  Eigen::Vector3d unit_z;
   // payload states
-  Eigen::Vector3f L;      // cable vector
-  Eigen::Vector3f L_dot;  // cable velocity
-  Eigen::Vector2f r;
-  Eigen::Vector2f v_p;
-  Eigen::Matrix<float, 3, 2> B;
-  Eigen::Matrix3f R_Ij;
-  Eigen::Vector3f dot_vq;
-  Eigen::Vector3f accel_body;
+  Eigen::Vector3d L;      // cable vector
+  Eigen::Vector3d L_dot;  // cable velocity
+  Eigen::Vector2d r;
+  Eigen::Vector2d v_p;
+  Eigen::Matrix<double, 3, 2> B;
+  Eigen::Matrix3d R_Ij;
+  Eigen::Vector3d dot_vq;
+  Eigen::Vector3d accel_body;
 
   // controller parameters
 
-  Eigen::Matrix3f Kp;
-  Eigen::Matrix3f Kv;
-  Eigen::Matrix3f T_tie;
-  Eigen::Matrix3f Lambda;
-  Eigen::Matrix3f Kpv;
-  Eigen::Matrix3f Identity;
-  float KL;
+  Eigen::Matrix3d Kp;
+  Eigen::Matrix3d Kv;
+  Eigen::Matrix3d T_tie;
+  Eigen::Matrix3d Lambda;
+  Eigen::Matrix3d Kpv;
+  Eigen::Matrix3d Identity;
+  double KL;
 
   // control output limit
-  Eigen::Vector3f reference_position;
-  Eigen::Vector3f UAV_position;
-  Eigen::Vector3f UAV_velocity;
-  Eigen::Vector4f UAV_attitude;
-  Eigen::Vector3f omega_j;
-  Eigen::Vector3f payload_position_vision;
-  Eigen::Vector3f payload_velocity_vision;
-  Eigen::Vector3f payload_position_mocap;
-  Eigen::Vector3f payload_velocity_mocap;
-  Eigen::Vector3f pos_error;
-  Eigen::Vector3f vel_error;
-  Eigen::Vector3f pos_error_max;
-  Eigen::Vector3f vel_error_max;
-  float int_max;
-  float tilt_max;
-  float int_start_error;
+  Eigen::Vector3d reference_position;
+  Eigen::Vector3d UAV_position;
+  Eigen::Vector3d UAV_velocity;
+  Eigen::Vector4d UAV_attitude;
+  Eigen::Vector3d omega_j;
+  Eigen::Vector3d payload_position_vision;
+  Eigen::Vector3d payload_velocity_vision;
+  Eigen::Vector3d payload_position_mocap;
+  Eigen::Vector3d payload_velocity_mocap;
+  Eigen::Vector3d pos_error;
+  Eigen::Vector3d vel_error;
+  Eigen::Vector3d pos_error_max;
+  Eigen::Vector3d vel_error_max;
+  double int_max;
+  double tilt_max;
+  double int_start_error;
 
   // control states
-  Eigen::Vector3f u_l, u_d, u_p, u_s;  // u_l for nominal contorol(PD), u_d for ude control(disturbance estimator)
-  Eigen::Vector3f integral;
+  Eigen::Vector3d u_l, u_d, u_p, u_s;  // u_l for nominal contorol(PD), u_d for ude control(disturbance estimator)
+  Eigen::Vector3d integral;
   Eigen::Vector3d accel_sp;
   Eigen::Vector3d thrust_sp;
   Eigen::Vector3d throttle_sp;
-  Eigen::Vector3f fL;
-  Eigen::Vector3f W_hat;
+  Eigen::Vector3d fL;
+  Eigen::Vector3d W_hat;
   bool isintegrationoverlimit{false};
 };
 
 px4_command::ControlOutput pos_controller_TIE::pos_controller(const px4_command::DroneState& _DroneState,
                                                               const px4_command::TrajectoryPoint& _Reference_State,
-                                                              float dt) {
+                                                              double dt) {
   mode = _DroneState.mode;
   // get quadrotor position and velocity
   for (int i = 0; i < 3; i++) {
@@ -315,9 +315,9 @@ px4_command::ControlOutput pos_controller_TIE::pos_controller(const px4_command:
   if (isperformAction) {
     switch (type) {
       case 0: {
-        Eigen::Vector3f e1 = Center - UAV_position;
-        Eigen::Vector3f n;
-        float e_norm = e1.norm();
+        Eigen::Vector3d e1 = Center - UAV_position;
+        Eigen::Vector3d n;
+        double e_norm = e1.norm();
         n.setZero();
         if (e_norm < 0.1) {  // for too a very small position error, set the norm and unit vector to a fixed number
           n(0) = 1;
@@ -327,7 +327,7 @@ px4_command::ControlOutput pos_controller_TIE::pos_controller(const px4_command:
         } else {
           n = e1.normalized();
         }
-        Eigen::Vector3f vd_direction;
+        Eigen::Vector3d vd_direction;
         vd_direction = unit_z.cross(n);
         vd_direction.normalize();  // normalize itself
 
@@ -350,7 +350,7 @@ px4_command::ControlOutput pos_controller_TIE::pos_controller(const px4_command:
     vel_error = -UAV_velocity;  // position stabilization
   }
 
-  float sq_r = r(0) * r(0) + r(1) * r(1);
+  double sq_r = r(0) * r(0) + r(1) * r(1);
   // update B matrix:
   if (Cable_Length_sq - sq_r > 0.01) {
     B(2, 0) = r(0) / sqrt((Cable_Length_sq - sq_r));
@@ -389,7 +389,7 @@ px4_command::ControlOutput pos_controller_TIE::pos_controller(const px4_command:
   accel_sp[0] = u_l[0] - u_d[0];
   accel_sp[1] = u_l[1] - u_d[1];
   accel_sp[2] = u_l[2] - u_d[2] + 9.81;  // + 9.81 for counteracting gravity
-  fL = TotalLiftingMass * accel_sp.cast<float>();
+  fL = TotalLiftingMass * accel_sp.cast<double>();
   thrust_sp = px4_command_utils::accelToThrust(accel_sp, TotalLiftingMass, tilt_max);
   throttle_sp = px4_command_utils::thrustToThrottleLinear(thrust_sp, motor_slope, motor_intercept);
   // publish auxiliary state

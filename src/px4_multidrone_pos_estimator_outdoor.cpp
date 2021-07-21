@@ -93,15 +93,15 @@ bool ResponseToSetGPSHomeCall(px4_command::SetHome::Request& req, px4_command::S
   return true;
 }
 
-void GetVisionFeedback(const geometry_msgs::PoseStamped::ConstPtr& msg, Eigen::Vector3f* payloadposition) {
+void GetVisionFeedback(const geometry_msgs::PoseStamped::ConstPtr& msg, Eigen::Vector3d* payloadposition) {
   (*payloadposition)(math_utils::Vector_X) = msg->pose.position.x;
   (*payloadposition)(math_utils::Vector_Y) = msg->pose.position.y;
   (*payloadposition)(math_utils::Vector_Z) = msg->pose.position.z;
 }
 
-void DisplayVisionResults(const Eigen::Vector3f& payloadposition, const Eigen::Vector3f& payloadvelocity,
-                          const Eigen::Vector3f& payloadpositionbody, const Eigen::Vector3f& payloadvelocitybody,
-                          const float& sampletime) {
+void DisplayVisionResults(const Eigen::Vector3d& payloadposition, const Eigen::Vector3d& payloadvelocity,
+                          const Eigen::Vector3d& payloadpositionbody, const Eigen::Vector3d& payloadvelocitybody,
+                          const double& sampletime) {
   //固定的浮点显示
   cout.setf(ios::fixed);
   //左对齐
@@ -143,19 +143,19 @@ int main(int argc, char** argv) {
   nh.param<bool>("IsVisionUsed", IsVisionFeedbackUsed, false);  // whether vision feedback is used
   nh.param<bool>("IsVisionMulti", IsVisionMulti, false);        // whether vision feedback is used in multidrone mode
   // ros::Subscriber* Subvision = NULL; To modify this later
-  Eigen::Vector3f PayloadPosition;
-  Eigen::Vector3f QuadrotorPositionInertial;
-  Eigen::Vector3f QuadrotorVelocityInertial;
-  Eigen::Vector3f PayloadPositionInertial;
-  Eigen::Vector3f PayloadVelocityInertial;
-  Eigen::Vector3f PayloadVelocity;
-  Eigen::Vector3f PreviousPayloadPosition;
-  Eigen::Vector3f PreviousPayloadVelocity;
-  Eigen::Vector3f PayloadAngularVelocity;
-  Eigen::Matrix3f R_IB;
-  Eigen::Vector4f Quad_Drone;
-  Eigen::Matrix3f OmegaCross;
-  Eigen::Vector3f Omega;
+  Eigen::Vector3d PayloadPosition;
+  Eigen::Vector3d QuadrotorPositionInertial;
+  Eigen::Vector3d QuadrotorVelocityInertial;
+  Eigen::Vector3d PayloadPositionInertial;
+  Eigen::Vector3d PayloadVelocityInertial;
+  Eigen::Vector3d PayloadVelocity;
+  Eigen::Vector3d PreviousPayloadPosition;
+  Eigen::Vector3d PreviousPayloadVelocity;
+  Eigen::Vector3d PayloadAngularVelocity;
+  Eigen::Matrix3d R_IB;
+  Eigen::Vector4d Quad_Drone;
+  Eigen::Matrix3d OmegaCross;
+  Eigen::Vector3d Omega;
   Omega.setZero();
   PayloadPositionInertial.setZero();
   PayloadVelocityInertial.setZero();
@@ -164,8 +164,8 @@ int main(int argc, char** argv) {
   PreviousPayloadPosition.setZero();
   PreviousPayloadVelocity.setZero();
   PayloadAngularVelocity.setZero();
-  float beta = 0.8;
-  float Ts = 0.02;
+  double beta = 0.8;
+  double Ts = 0.02;
   // define the drone ID and ros topics:
   std::string TopicMavrosGPSPos = "/uav";
   std::string TopicMavrosGPSGlobal = "/uav";
@@ -250,8 +250,8 @@ int main(int argc, char** argv) {
   ROS_INFO("Start the estimator...");
 
   ros::Time BeginTime = ros::Time::now();
-  float LastTime = px4_command_utils::get_time_in_sec(BeginTime);
-  float CurrentTime = 0.0;
+  double LastTime = px4_command_utils::get_time_in_sec(BeginTime);
+  double CurrentTime = 0.0;
   while (ros::ok()) {
     ros::spinOnce();
     // calculate the time interval

@@ -33,68 +33,68 @@ static px4_command::AddonForce _AddonForce;  // addonforce to be published
 static px4_command::DroneState _DroneState;  // dronestate from uav0
 static px4_command::ControlCommand Command_Now;
 // estimation:
-static Eigen::Vector3f Delta_T_I;
-static Eigen::Vector3f Delta_R_I;
-static Eigen::Vector3f Delta_T;
-static Eigen::Vector3f Delta_R;
-static Eigen::Vector3f Delta_rt;
-static Eigen::Vector3f Delta_pt;
-static Eigen::Matrix3f Delta_sq;
+static Eigen::Vector3d Delta_T_I;
+static Eigen::Vector3d Delta_R_I;
+static Eigen::Vector3d Delta_T;
+static Eigen::Vector3d Delta_R;
+static Eigen::Vector3d Delta_rt;
+static Eigen::Vector3d Delta_pt;
+static Eigen::Matrix3d Delta_sq;
 static bool integration_start;
-static float intergration_start_height;
+static double intergration_start_height;
 // states
-static Eigen::Matrix<float, 24, 1> X_total;
-static Eigen::Matrix<float, 24, 1> X_total_rj_modified;
-static Eigen::Matrix<float, 6, 1> MPCU_total;
-static Eigen::Matrix<float, 6, 24> MPCK;
-static Eigen::Matrix<float, 2, 3> r_sq;
-static Eigen::Matrix<float, 2, 3> rd_sq;
-static Eigen::Matrix<float, 2, 3> v_sq;
-static Eigen::Matrix3f f_L_sq;  //
-static float cur_time;
-static Eigen::Vector3f Xp;
-static Eigen::Matrix3f R_IP;
-static Eigen::Matrix3f R_PI;
-static Eigen::Vector3f v_p;
-static Eigen::Vector3f omega_p;
-static Eigen::Matrix3f omega_p_cross;
+static Eigen::Matrix<double, 24, 1> X_total;
+static Eigen::Matrix<double, 24, 1> X_total_rj_modified;
+static Eigen::Matrix<double, 6, 1> MPCU_total;
+static Eigen::Matrix<double, 6, 24> MPCK;
+static Eigen::Matrix<double, 2, 3> r_sq;
+static Eigen::Matrix<double, 2, 3> rd_sq;
+static Eigen::Matrix<double, 2, 3> v_sq;
+static Eigen::Matrix3d f_L_sq;  //
+static double cur_time;
+static Eigen::Vector3d Xp;
+static Eigen::Matrix3d R_IP;
+static Eigen::Matrix3d R_PI;
+static Eigen::Vector3d v_p;
+static Eigen::Vector3d omega_p;
+static Eigen::Matrix3d omega_p_cross;
 // command
-static Eigen::Vector3f reference_position;
-static Eigen::Vector3f vel_error;
-static Eigen::Vector3f pos_error;
-static Eigen::Vector3f angle_error;
+static Eigen::Vector3d reference_position;
+static Eigen::Vector3d vel_error;
+static Eigen::Vector3d pos_error;
+static Eigen::Vector3d angle_error;
 static Eigen::Vector3d AttitudeTargetEuler;
-static Eigen::Vector4f AttitudeTargetQuaternionv;
+static Eigen::Vector4d AttitudeTargetQuaternionv;
 static Eigen::Quaterniond AttitudeTargetQuaterniond;
-static Eigen::Matrix3f R_IPd;
+static Eigen::Matrix3d R_IPd;
 // auxiliary variables:
-static Eigen::Vector3f FT;
-static Eigen::Vector3f FR;
-static Eigen::Vector3f FR2;
-static Eigen::Vector3f BT;
-static Eigen::Vector3f DT;
-static Eigen::Vector3f DR;
-static Eigen::Matrix<float, 3, 2> B_j;
+static Eigen::Vector3d FT;
+static Eigen::Vector3d FR;
+static Eigen::Vector3d FR2;
+static Eigen::Vector3d BT;
+static Eigen::Vector3d DT;
+static Eigen::Vector3d DR;
+static Eigen::Matrix<double, 3, 2> B_j;
 // parameters:
 static int num_of_drones;
-static float payload_mass;
-static float M_q;
-static Eigen::Vector3f g_I;
-static Eigen::Matrix3f t_sq;
-static Eigen::Matrix3f A;
-static Eigen::Matrix3f J_q;
-static Eigen::Matrix3f J_p;
-static Eigen::Matrix3f D;
-static Eigen::Vector3f quadrotor_mass;
-static Eigen::Vector3f a_j_sq;
-static Eigen::Matrix3f lambda_T;
-static Eigen::Matrix3f lambda_R;
-static Eigen::Vector3f cablelength;
-static Eigen::Vector3f cablelength_squared;
-static Eigen::Vector3f R1, R2;
-static Eigen::Matrix<float, 3, Eigen::Dynamic> E_j;
-static Eigen::Matrix3f Identity;
-static Eigen::Matrix3f kv, KR;
+static double payload_mass;
+static double M_q;
+static Eigen::Vector3d g_I;
+static Eigen::Matrix3d t_sq;
+static Eigen::Matrix3d A;
+static Eigen::Matrix3d J_q;
+static Eigen::Matrix3d J_p;
+static Eigen::Matrix3d D;
+static Eigen::Vector3d quadrotor_mass;
+static Eigen::Vector3d a_j_sq;
+static Eigen::Matrix3d lambda_T;
+static Eigen::Matrix3d lambda_R;
+static Eigen::Vector3d cablelength;
+static Eigen::Vector3d cablelength_squared;
+static Eigen::Vector3d R1, R2;
+static Eigen::Matrix<double, 3, Eigen::Dynamic> E_j;
+static Eigen::Matrix3d Identity;
+static Eigen::Matrix3d kv, KR;
 int CooperativePayload;
 // action state
 static bool isperformAction;
@@ -103,9 +103,9 @@ static trajectory::Reference_Path rect_path;
 static trajectory::Rectangular_Trajectory_Parameter rect_param;
 static trajectory::Rectangular_Trajectory rec_traj;
 // geo_fence
-static Eigen::Vector2f geo_fence_x;
-static Eigen::Vector2f geo_fence_y;
-static Eigen::Vector2f geo_fence_z;
+static Eigen::Vector2d geo_fence_x;
+static Eigen::Vector2d geo_fence_y;
+static Eigen::Vector2d geo_fence_z;
 
 void GetCommand(const px4_command::ControlCommand::ConstPtr& msg) {
   Command_Now = *msg;
@@ -116,10 +116,10 @@ void GetCommand(const px4_command::ControlCommand::ConstPtr& msg) {
   AttitudeTargetEuler(1) = (double)Command_Now.Reference_State.pitch_ref;
   AttitudeTargetEuler(2) = (double)Command_Now.Reference_State.yaw_ref;
   AttitudeTargetQuaterniond = quaternion_from_rpy(AttitudeTargetEuler);
-  AttitudeTargetQuaternionv(0) = (float)AttitudeTargetQuaterniond.w();
-  AttitudeTargetQuaternionv(1) = (float)AttitudeTargetQuaterniond.x();
-  AttitudeTargetQuaternionv(2) = (float)AttitudeTargetQuaterniond.y();
-  AttitudeTargetQuaternionv(3) = (float)AttitudeTargetQuaterniond.z();
+  AttitudeTargetQuaternionv(0) = (double)AttitudeTargetQuaterniond.w();
+  AttitudeTargetQuaternionv(1) = (double)AttitudeTargetQuaterniond.x();
+  AttitudeTargetQuaternionv(2) = (double)AttitudeTargetQuaterniond.y();
+  AttitudeTargetQuaternionv(3) = (double)AttitudeTargetQuaterniond.z();
   R_IPd = QuaterionToRotationMatrix(AttitudeTargetQuaternionv);
 }
 
@@ -204,11 +204,11 @@ bool ResponseToActionCall(px4_command::MultiPayloadAction::Request& req,
 
 void LoadMPCGain(ros::NodeHandle& nh) {
   MPCK.setZero();
-  float k_gain;
+  double k_gain;
   string name_head = "MPCgain/Kmpc_";
   for (int i = 0; i < 6; i++) {
     for (int j = 0; j < 24; j++) {
-      nh.param<float>(name_head + std::to_string(i) + "_" + std::to_string(j), MPCK(i, j), 0.0);
+      nh.param<double>(name_head + std::to_string(i) + "_" + std::to_string(j), MPCK(i, j), 0.0);
     }
   }
 }
@@ -373,7 +373,7 @@ void DisplayParameters() {
   cout << "intergration start height is: " << intergration_start_height << " m " << endl;
 }
 
-void MPCDummy(Eigen::Vector3f& R1, Eigen::Vector3f& R2) {
+void MPCDummy(Eigen::Vector3d& R1, Eigen::Vector3d& R2) {
   // calculate angluar error
   angle_error = 0.5 * Veemap(R_IPd.transpose() * R_IP - R_IP.transpose() * R_IPd);
 
@@ -456,38 +456,38 @@ int main(int argc, char** argv) {
   /* an estimation of payload moment of inertia. accurate moment of inertia is unecessary because more payload will be
    * added during flight test*/
   J_p << 0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.1;
-  float kL = 0;
+  double kL = 0;
 
   // loading all parameters into the estimator:
-  nh.param<float>("IntegrationStartHeight", intergration_start_height, 0.0);
+  nh.param<double>("IntegrationStartHeight", intergration_start_height, 0.0);
   nh.param<int>("Pos_GNC/num_drone", num_of_drones, 1);
-  nh.param<float>("Payload/mass", payload_mass, 1.0);
+  nh.param<double>("Payload/mass", payload_mass, 1.0);
 
-  nh.param<float>("Pos_GNC/lambda_Txy", lambda_T(0, 0), 0.2);
-  nh.param<float>("Pos_GNC/lambda_Txy", lambda_T(1, 1), 0.2);
-  nh.param<float>("Pos_GNC/lambda_Tz", lambda_T(2, 2), 0.2);
-  nh.param<float>("Pos_GNC/lambda_Rxy", lambda_R(0, 0), 0.2);
-  nh.param<float>("Pos_GNC/lambda_Rxy", lambda_R(1, 1), 0.2);
-  nh.param<float>("Pos_GNC/lambda_Rz", lambda_R(2, 2), 0.2);
-  nh.param<float>("Pos_GNC/kL", kL, 0.1);
+  nh.param<double>("Pos_GNC/lambda_Txy", lambda_T(0, 0), 0.2);
+  nh.param<double>("Pos_GNC/lambda_Txy", lambda_T(1, 1), 0.2);
+  nh.param<double>("Pos_GNC/lambda_Tz", lambda_T(2, 2), 0.2);
+  nh.param<double>("Pos_GNC/lambda_Rxy", lambda_R(0, 0), 0.2);
+  nh.param<double>("Pos_GNC/lambda_Rxy", lambda_R(1, 1), 0.2);
+  nh.param<double>("Pos_GNC/lambda_Rz", lambda_R(2, 2), 0.2);
+  nh.param<double>("Pos_GNC/kL", kL, 0.1);
   // load trajectory data
   isperformAction = false;
   type = 1;
-  nh.param<float>("Rectangular_Trajectory/a_x", rect_param.a_x, 0.0);
-  nh.param<float>("Rectangular_Trajectory/a_y", rect_param.a_y, 0.0);
-  nh.param<float>("Rectangular_Trajectory/vel_x", rect_param.v_x, 0.0);
-  nh.param<float>("Rectangular_Trajectory/vel_y", rect_param.v_y, 0.0);
-  nh.param<float>("Rectangular_Trajectory/h", rect_param.h, 0.0);
-  nh.param<float>("Rectangular_Trajectory/center_x", rect_param.center_x, 0.0);
-  nh.param<float>("Rectangular_Trajectory/center_y", rect_param.center_y, 0.0);
-  nh.param<float>("Rectangular_Trajectory/center_z", rect_param.center_z, 0.0);
+  nh.param<double>("Rectangular_Trajectory/a_x", rect_param.a_x, 0.0);
+  nh.param<double>("Rectangular_Trajectory/a_y", rect_param.a_y, 0.0);
+  nh.param<double>("Rectangular_Trajectory/vel_x", rect_param.v_x, 0.0);
+  nh.param<double>("Rectangular_Trajectory/vel_y", rect_param.v_y, 0.0);
+  nh.param<double>("Rectangular_Trajectory/h", rect_param.h, 0.0);
+  nh.param<double>("Rectangular_Trajectory/center_x", rect_param.center_x, 0.0);
+  nh.param<double>("Rectangular_Trajectory/center_y", rect_param.center_y, 0.0);
+  nh.param<double>("Rectangular_Trajectory/center_z", rect_param.center_z, 0.0);
 
-  nh.param<float>("payload_geofence/x_min", geo_fence_x[math_utils::Vector_X], -0.6);
-  nh.param<float>("payload_geofence/x_max", geo_fence_x[math_utils::Vector_Y], 0.6);
-  nh.param<float>("payload_geofence/y_min", geo_fence_y[math_utils::Vector_X], -0.3);
-  nh.param<float>("payload_geofence/y_max", geo_fence_y[math_utils::Vector_Y], 0.3);
-  nh.param<float>("payload_geofence/z_min", geo_fence_z[math_utils::Vector_X], -0.05);
-  nh.param<float>("payload_geofence/z_max", geo_fence_z[math_utils::Vector_Y], 0.6);
+  nh.param<double>("payload_geofence/x_min", geo_fence_x[math_utils::Vector_X], -0.6);
+  nh.param<double>("payload_geofence/x_max", geo_fence_x[math_utils::Vector_Y], 0.6);
+  nh.param<double>("payload_geofence/y_min", geo_fence_y[math_utils::Vector_X], -0.3);
+  nh.param<double>("payload_geofence/y_max", geo_fence_y[math_utils::Vector_Y], 0.3);
+  nh.param<double>("payload_geofence/z_min", geo_fence_z[math_utils::Vector_X], -0.05);
+  nh.param<double>("payload_geofence/z_max", geo_fence_z[math_utils::Vector_Y], 0.6);
 
   rec_traj.LoadParameter(rect_param);
   // load the parameter for controller
@@ -501,18 +501,18 @@ int main(int argc, char** argv) {
     R2.setZero();
   }
   // temp variables
-  Eigen::Vector3f temp_t_j;
+  Eigen::Vector3d temp_t_j;
   M_q = 0.0;  // total mass of all quadrotorsa_j_sq
-  float e_n = 1.0;
+  double e_n = 1.0;
   E_j.resize(3, num_of_drones * 3);
   for (int i = 0; i < num_of_drones; i++) {
     temp_t_j.setZero();
-    nh.param<float>("uav" + to_string(i) + "_Pos_GNC/TetherOffset_x", temp_t_j(0), 0.5);
-    nh.param<float>("uav" + to_string(i) + "_Pos_GNC/TetherOffset_y", temp_t_j(1), 0);
-    nh.param<float>("uav" + to_string(i) + "_Pos_GNC/TetherOffset_z", temp_t_j(2), 0);
-    nh.param<float>("uav" + to_string(i) + "_Pos_GNC/PayloadSharingPortion", a_j_sq(i), 0);
-    nh.param<float>("uav" + to_string(i) + "_Pos_GNC/mass", quadrotor_mass(i), 1.0);
-    nh.param<float>("uav" + to_string(i) + "_Pos_GNC/cablelength", cablelength(i), 1.0);
+    nh.param<double>("uav" + to_string(i) + "_Pos_GNC/TetherOffset_x", temp_t_j(0), 0.5);
+    nh.param<double>("uav" + to_string(i) + "_Pos_GNC/TetherOffset_y", temp_t_j(1), 0);
+    nh.param<double>("uav" + to_string(i) + "_Pos_GNC/TetherOffset_z", temp_t_j(2), 0);
+    nh.param<double>("uav" + to_string(i) + "_Pos_GNC/PayloadSharingPortion", a_j_sq(i), 0);
+    nh.param<double>("uav" + to_string(i) + "_Pos_GNC/mass", quadrotor_mass(i), 1.0);
+    nh.param<double>("uav" + to_string(i) + "_Pos_GNC/cablelength", cablelength(i), 1.0);
     cablelength_squared(i) = cablelength(i) * cablelength(i);
     D += a_j_sq(i) * Hatmap(temp_t_j) * Hatmap(temp_t_j);
     t_sq.col(i) = temp_t_j;
@@ -547,12 +547,12 @@ int main(int argc, char** argv) {
   // initialize all estimations
   ResetStates();
   B_j << 1.0, 0.0, 0.0, 1.0, 0.0, 0.0;
-  Eigen::Matrix3f t_j_cross;
-  Eigen::Vector2f r_j;
-  Eigen::Vector2f mu_j;
-  Eigen::Vector2f v_j;
-  Eigen::Vector4f AttitudeQuaternionv;
-  Eigen::Vector3f temp;
+  Eigen::Matrix3d t_j_cross;
+  Eigen::Vector2d r_j;
+  Eigen::Vector2d mu_j;
+  Eigen::Vector2d v_j;
+  Eigen::Vector4d AttitudeQuaternionv;
+  Eigen::Vector3d temp;
   t_j_cross.setZero();
   DisplayParameters();  // display parameters for checking...
   int check_flag;
@@ -567,8 +567,8 @@ int main(int argc, char** argv) {
   ROS_INFO("Parameter OK, Start the interdrone communication and disturbance estimation...");
   // 记录启控时间
   ros::Time begin_time = ros::Time::now();
-  float last_time = px4_command_utils::get_time_in_sec(begin_time);
-  float dt = 0.0;
+  double last_time = px4_command_utils::get_time_in_sec(begin_time);
+  double dt = 0.0;
   while (ros::ok()) {
     cur_time = px4_command_utils::get_time_in_sec(begin_time);
     dt = cur_time - last_time;
@@ -619,7 +619,7 @@ int main(int argc, char** argv) {
             DR += t_j_cross * R_PI * Delta_sq.col(i);
             FT += f_L_sq.col(i);
             // calculate B_j for each drone
-            float sq_r = r_j(0) * r_j(0) + r_j(1) * r_j(1);
+            double sq_r = r_j(0) * r_j(0) + r_j(1) * r_j(1);
             if (cablelength_squared(i) - sq_r > 0.01) {
               B_j(2, 0) = -r_j(0) / sqrt((cablelength_squared(i) - sq_r));
               B_j(2, 1) = -r_j(1) / sqrt((cablelength_squared(i) - sq_r));

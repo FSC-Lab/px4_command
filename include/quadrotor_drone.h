@@ -23,22 +23,22 @@ struct liftcurve {
 };
 
 struct IMUdata {
-  Eigen::Vector4f Quad_Drone;   // quadrotor attitude
-  Eigen::Vector3f AccBody;      // acc in body fixed frame
-  Eigen::Vector3f AccInertial;  // acc in inertial frame
-  Eigen::Matrix3f R_Ij;         // drone attitude
+  Eigen::Vector4d Quad_Drone;   // quadrotor attitude
+  Eigen::Vector3d AccBody;      // acc in body fixed frame
+  Eigen::Vector3d AccInertial;  // acc in inertial frame
+  Eigen::Matrix3d R_Ij;         // drone attitude
 };
 
 struct drone_command {
-  Eigen::Vector3f accelSetpoint;     // acceleration setpoint based on translational control
-  Eigen::Vector3f thrustSetpoint;    // thrust setpoint under tilt angle constraint
-  Eigen::Vector3f throttleSetpoint;  // calculate the required throttle command based on the lift model
+  Eigen::Vector3d accelSetpoint;     // acceleration setpoint based on translational control
+  Eigen::Vector3d thrustSetpoint;    // thrust setpoint under tilt angle constraint
+  Eigen::Vector3d throttleSetpoint;  // calculate the required throttle command based on the lift model
 };
 
 struct quadrotor_parameter {
   liftcurve liftmodel;
-  float Quad_MASS;
-  float tiltlimit;       // maximum allowed tilt angle for drones (DEG)
+  double Quad_MASS;
+  double tiltlimit;       // maximum allowed tilt angle for drones (DEG)
   std::string uav_name;  // uav name tag
 };
 
@@ -51,9 +51,9 @@ class quadrotor_drone {
   drone_command getDroneCommand();
   void loadparameter(const quadrotor_parameter& param);
   void updatestate(const px4_command::DroneState& _DroneState);
-  px4_command::ControlOutput outputdronecommand(const Eigen::Vector3f& accel_command, const float& effective_mass,
-                                                const Eigen::Vector3f& u_l, const Eigen::Vector3f& u_d);
-  px4_command::ControlOutput outputdronecommand(const Eigen::Vector3f& desiredlift);
+  px4_command::ControlOutput outputdronecommand(const Eigen::Vector3d& accel_command, const double& effective_mass,
+                                                const Eigen::Vector3d& u_l, const Eigen::Vector3d& u_d);
+  px4_command::ControlOutput outputdronecommand(const Eigen::Vector3d& desiredlift);
   void printf_param();
   void printf_state();
 
@@ -62,7 +62,7 @@ class quadrotor_drone {
   drone_command command;
   px4_command::ControlOutput output;
   IMUdata IMU;
-  Eigen::Vector3f g_I;  // gravity acc in inertial frame
+  Eigen::Vector3d g_I;  // gravity acc in inertial frame
 };
 
 quadrotor_drone::quadrotor_drone() { g_I = math_utils::GetGravitationalAcc(); }
@@ -84,9 +84,9 @@ void quadrotor_drone::updatestate(const px4_command::DroneState& _DroneState) {
   IMU.AccInertial = IMU.R_Ij * IMU.AccBody + g_I;  // calculate true acc in inertial frame dot_vqj in TCST paper
 }
 
-px4_command::ControlOutput quadrotor_drone::outputdronecommand(const Eigen::Vector3f& accelCommand,
-                                                               const float& effective_mass, const Eigen::Vector3f& u_l,
-                                                               const Eigen::Vector3f& u_d) {
+px4_command::ControlOutput quadrotor_drone::outputdronecommand(const Eigen::Vector3d& accelCommand,
+                                                               const double& effective_mass, const Eigen::Vector3d& u_l,
+                                                               const Eigen::Vector3d& u_d) {
   command.accelSetpoint = accelCommand;
   command.thrustSetpoint = px4_command_utils::accelToThrust(command.accelSetpoint, effective_mass, parameter.tiltlimit);
   // calculate the required throttle command
@@ -102,7 +102,7 @@ px4_command::ControlOutput quadrotor_drone::outputdronecommand(const Eigen::Vect
 
   return output;
 }
-px4_command::ControlOutput quadrotor_drone::outputdronecommand(const Eigen::Vector3f& desiredlift) {
+px4_command::ControlOutput quadrotor_drone::outputdronecommand(const Eigen::Vector3d& desiredlift) {
   command.thrustSetpoint = px4_command_utils::ForceToThrust(desiredlift, parameter.tiltlimit);
   // calculate the required throttle command
   command.throttleSetpoint = px4_command_utils::thrustToThrottleLinear(

@@ -8,24 +8,24 @@ bool armed
 string mode
 
 ## 系统启动时间
-float32 time_from_start             ## [s]
+float64 time_from_start             ## [s]
 
 ## drone position and attitude
-float32  longitude                  ## global position
-float32  latitude                   ## global position
-float32[3] position                 ## [m] local position if in outdoor mode
-float32[3] velocity                 ## [m/s] inertial velocity in ENU
-float32[3] attitude                 ## [rad]
+float64  longitude                  ## global position
+float64  latitude                   ## global position
+float64[3] position                 ## [m] local position if in outdoor mode
+float64[3] velocity                 ## [m/s] inertial velocity in ENU
+float64[3] attitude                 ## [rad]
 geometry_msgs/Quaternion attitude_q ## []
-float32[3] attitude_rate            ## [rad/s]
-float32[3] acceleration             ## [m/s^2] defined in body fixed frame
+float64[3] attitude_rate            ## [rad/s]
+float64[3] acceleration             ## [m/s^2] defined in body fixed frame
 ## payload info from mocap system
-float32[3] payload_vel              ## [m/s]
-float32[3] payload_pos              ## [m]
-float32[4] payload_quaternion       ## []
-float32[3] payload_angular_vel      ## [rad/s]
+float64[3] payload_vel              ## [m/s]
+float64[3] payload_pos              ## [m]
+float64[4] payload_quaternion       ## []
+float64[3] payload_angular_vel      ## [rad/s]
 ## battery status
-float32 battery_voltage             ## [V] 
-float32 battery_remaining           ## 
+float64 battery_voltage             ## [V] 
+float64 battery_remaining           ## 
 ## Flag showing whether the mocap msg has been updated very loop
 bool mocapOK                        

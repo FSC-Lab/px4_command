@@ -198,7 +198,7 @@ class command_to_mavros_multidrone {
   Eigen::Vector3d euler_fcu_target;
   Eigen::Vector3d rates_fcu_target;
   // Target thrust of the drone [from fcu]
-  float Thrust_target;
+  double Thrust_target;
   mavros_msgs::ActuatorControl actuator_target;
 
   //变量声明 - 服务
@@ -214,23 +214,23 @@ class command_to_mavros_multidrone {
   void idle();
 
   //发送位置期望值至飞控（输入：期望xyz,期望yaw）
-  void send_pos_setpoint(const Eigen::Vector3d& pos_sp, float yaw_sp);
+  void send_pos_setpoint(const Eigen::Vector3d& pos_sp, double yaw_sp);
 
   //发送速度期望值至飞控（输入：期望vxvyvz,期望yaw）
-  void send_vel_setpoint(const Eigen::Vector3d& vel_sp, float yaw_sp);
+  void send_vel_setpoint(const Eigen::Vector3d& vel_sp, double yaw_sp);
 
   //发送速度期望值至飞控（机体系）（输入：期望vxvyvz,期望yaw）
-  void send_vel_setpoint_body(const Eigen::Vector3d& vel_sp, float yaw_sp);
+  void send_vel_setpoint_body(const Eigen::Vector3d& vel_sp, double yaw_sp);
 
   //发送加速度期望值至飞控（输入：期望axayaz,期望yaw）
   //这是px4_pos_controller.cpp中目前使用的控制方式
-  void send_accel_setpoint(const Eigen::Vector3d& accel_sp, float yaw_sp);
+  void send_accel_setpoint(const Eigen::Vector3d& accel_sp, double yaw_sp);
 
   //发送角度期望值至飞控（输入：期望角度-四元数,期望推力）
   void send_attitude_setpoint(const px4_command::AttitudeReference& _AttitudeReference);
 
   //发送角度期望值至飞控（输入：期望角速度,期望推力）
-  void send_attitude_rate_setpoint(const Eigen::Vector3d& attitude_rate_sp, float thrust_sp);
+  void send_attitude_rate_setpoint(const Eigen::Vector3d& attitude_rate_sp, double thrust_sp);
 
   //发送底层至飞控（输入：MxMyMz,期望推力）[Not recommanded. Because the high delay between the onboard computer and
   //Pixhawk]
@@ -280,7 +280,7 @@ void command_to_mavros_multidrone::idle() {
 }
 
 //发送位置期望值至飞控（输入：期望xyz,期望yaw）
-void command_to_mavros_multidrone::send_pos_setpoint(const Eigen::Vector3d& pos_sp, float yaw_sp) {
+void command_to_mavros_multidrone::send_pos_setpoint(const Eigen::Vector3d& pos_sp, double yaw_sp) {
   mavros_msgs::PositionTarget pos_setpoint;
   // Bitmask toindicate which dimensions should be ignored (1 means ignore,0 means not ignore; Bit 10 must set to 0)
   // Bit 1:x, bit 2:y, bit 3:z, bit 4:vx, bit 5:vy, bit 6:vz, bit 7:ax, bit 8:ay, bit 9:az, bit 10:is_force_sp, bit
@@ -305,7 +305,7 @@ void command_to_mavros_multidrone::send_pos_setpoint(const Eigen::Vector3d& pos_
 }
 
 //发送速度期望值至飞控（输入：期望vxvyvz,期望yaw）
-void command_to_mavros_multidrone::send_vel_setpoint(const Eigen::Vector3d& vel_sp, float yaw_sp) {
+void command_to_mavros_multidrone::send_vel_setpoint(const Eigen::Vector3d& vel_sp, double yaw_sp) {
   mavros_msgs::PositionTarget pos_setpoint;
 
   pos_setpoint.type_mask = 0b100111000111;
@@ -328,7 +328,7 @@ void command_to_mavros_multidrone::send_vel_setpoint(const Eigen::Vector3d& vel_
 }
 
 //发送速度期望值至飞控（机体系）（输入：期望vxvyvz,期望yaw）
-void command_to_mavros_multidrone::send_vel_setpoint_body(const Eigen::Vector3d& vel_sp, float yaw_sp) {
+void command_to_mavros_multidrone::send_vel_setpoint_body(const Eigen::Vector3d& vel_sp, double yaw_sp) {
   mavros_msgs::PositionTarget pos_setpoint;
 
   pos_setpoint.type_mask = 0b100111000111;
@@ -353,7 +353,7 @@ void command_to_mavros_multidrone::send_vel_setpoint_body(const Eigen::Vector3d&
 }
 
 //发送加速度期望值至飞控（输入：期望axayaz,期望yaw）
-void command_to_mavros_multidrone::send_accel_setpoint(const Eigen::Vector3d& accel_sp, float yaw_sp) {
+void command_to_mavros_multidrone::send_accel_setpoint(const Eigen::Vector3d& accel_sp, double yaw_sp) {
   mavros_msgs::PositionTarget pos_setpoint;
 
   pos_setpoint.type_mask = 0b100000111111;
@@ -402,7 +402,7 @@ void command_to_mavros_multidrone::send_attitude_setpoint(const px4_command::Att
 
 //发送角度期望值至飞控（输入：期望角速度,期望推力）
 void command_to_mavros_multidrone::send_attitude_rate_setpoint(const Eigen::Vector3d& attitude_rate_sp,
-                                                               float thrust_sp) {
+                                                               double thrust_sp) {
   mavros_msgs::AttitudeTarget att_setpoint;
 
   // Mappings: If any of these bits are set, the corresponding input should be ignored:

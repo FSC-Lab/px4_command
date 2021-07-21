@@ -26,50 +26,50 @@ class pos_controller_PID {
  public:
   //构造函数
   pos_controller_PID(void) : pos_pid_nh("~") {
-    pos_pid_nh.param<float>("Quad/mass", Quad_MASS, 1.0);
+    pos_pid_nh.param<double>("Quad/mass", Quad_MASS, 1.0);
 
-    pos_pid_nh.param<float>("Pos_pid/Kp_xy", Kp[0], 1.0);
-    pos_pid_nh.param<float>("Pos_pid/Kp_xy", Kp[1], 1.0);
-    pos_pid_nh.param<float>("Pos_pid/Kp_z", Kp[2], 2.0);
-    pos_pid_nh.param<float>("Pos_pid/Kd_xy", Kd[0], 0.5);
-    pos_pid_nh.param<float>("Pos_pid/Kd_xy", Kd[1], 0.5);
-    pos_pid_nh.param<float>("Pos_pid/Kd_z", Kd[2], 0.5);
-    pos_pid_nh.param<float>("Pos_pid/Ki_xy", Ki[0], 0.2);
-    pos_pid_nh.param<float>("Pos_pid/Ki_xy", Ki[1], 0.2);
-    pos_pid_nh.param<float>("Pos_pid/Ki_z", Ki[2], 0.2);
+    pos_pid_nh.param<double>("Pos_pid/Kp_xy", Kp[0], 1.0);
+    pos_pid_nh.param<double>("Pos_pid/Kp_xy", Kp[1], 1.0);
+    pos_pid_nh.param<double>("Pos_pid/Kp_z", Kp[2], 2.0);
+    pos_pid_nh.param<double>("Pos_pid/Kd_xy", Kd[0], 0.5);
+    pos_pid_nh.param<double>("Pos_pid/Kd_xy", Kd[1], 0.5);
+    pos_pid_nh.param<double>("Pos_pid/Kd_z", Kd[2], 0.5);
+    pos_pid_nh.param<double>("Pos_pid/Ki_xy", Ki[0], 0.2);
+    pos_pid_nh.param<double>("Pos_pid/Ki_xy", Ki[1], 0.2);
+    pos_pid_nh.param<double>("Pos_pid/Ki_z", Ki[2], 0.2);
 
-    pos_pid_nh.param<float>("Limit/pxy_error_max", pos_error_max[0], 0.6);
-    pos_pid_nh.param<float>("Limit/pxy_error_max", pos_error_max[1], 0.6);
-    pos_pid_nh.param<float>("Limit/pz_error_max", pos_error_max[2], 1.0);
-    pos_pid_nh.param<float>("Limit/vxy_error_max", vel_error_max[0], 0.3);
-    pos_pid_nh.param<float>("Limit/vxy_error_max", vel_error_max[1], 0.3);
-    pos_pid_nh.param<float>("Limit/vz_error_max", vel_error_max[2], 1.0);
-    pos_pid_nh.param<float>("Limit/pxy_int_max", int_max[0], 0.5);
-    pos_pid_nh.param<float>("Limit/pxy_int_max", int_max[1], 0.5);
-    pos_pid_nh.param<float>("Limit/pz_int_max", int_max[2], 0.5);
-    pos_pid_nh.param<float>("Limit/tilt_max", tilt_max, 20.0);
-    pos_pid_nh.param<float>("Limit/int_start_error", int_start_error, 0.3);
+    pos_pid_nh.param<double>("Limit/pxy_error_max", pos_error_max[0], 0.6);
+    pos_pid_nh.param<double>("Limit/pxy_error_max", pos_error_max[1], 0.6);
+    pos_pid_nh.param<double>("Limit/pz_error_max", pos_error_max[2], 1.0);
+    pos_pid_nh.param<double>("Limit/vxy_error_max", vel_error_max[0], 0.3);
+    pos_pid_nh.param<double>("Limit/vxy_error_max", vel_error_max[1], 0.3);
+    pos_pid_nh.param<double>("Limit/vz_error_max", vel_error_max[2], 1.0);
+    pos_pid_nh.param<double>("Limit/pxy_int_max", int_max[0], 0.5);
+    pos_pid_nh.param<double>("Limit/pxy_int_max", int_max[1], 0.5);
+    pos_pid_nh.param<double>("Limit/pz_int_max", int_max[2], 0.5);
+    pos_pid_nh.param<double>("Limit/tilt_max", tilt_max, 20.0);
+    pos_pid_nh.param<double>("Limit/int_start_error", int_start_error, 0.3);
 
-    integral = Eigen::Vector3f(0.0, 0.0, 0.0);
+    integral = Eigen::Vector3d(0.0, 0.0, 0.0);
   }
 
   // Quadrotor Parameter
-  float Quad_MASS;
+  double Quad_MASS;
 
   // PID parameter for the control law
-  Eigen::Vector3f Kp;
-  Eigen::Vector3f Kd;
-  Eigen::Vector3f Ki;
+  Eigen::Vector3d Kp;
+  Eigen::Vector3d Kd;
+  Eigen::Vector3d Ki;
 
   // Limitation
-  Eigen::Vector3f pos_error_max;
-  Eigen::Vector3f vel_error_max;
-  Eigen::Vector3f int_max;
-  float tilt_max;
-  float int_start_error;
+  Eigen::Vector3d pos_error_max;
+  Eigen::Vector3d vel_error_max;
+  Eigen::Vector3d int_max;
+  double tilt_max;
+  double int_start_error;
 
   //积分项
-  Eigen::Vector3f integral;
+  Eigen::Vector3d integral;
 
   //输出
   px4_command::ControlOutput _ControlOutput;
@@ -82,7 +82,7 @@ class pos_controller_PID {
   // Position control main function
   // [Input: Current state, Reference state, sub_mode, dt; Output: AttitudeReference;]
   px4_command::ControlOutput pos_controller(const px4_command::DroneState& _DroneState,
-                                            const px4_command::TrajectoryPoint& _Reference_State, float dt);
+                                            const px4_command::TrajectoryPoint& _Reference_State, double dt);
 
  private:
   ros::NodeHandle pos_pid_nh;
@@ -90,12 +90,12 @@ class pos_controller_PID {
 
 px4_command::ControlOutput pos_controller_PID::pos_controller(const px4_command::DroneState& _DroneState,
                                                               const px4_command::TrajectoryPoint& _Reference_State,
-                                                              float dt) {
+                                                              double dt) {
   Eigen::Vector3d accel_sp;
 
   // 计算误差项
-  Eigen::Vector3f pos_error;
-  Eigen::Vector3f vel_error;
+  Eigen::Vector3d pos_error;
+  Eigen::Vector3d vel_error;
 
   px4_command_utils::cal_pos_error(_DroneState, _Reference_State, pos_error);
   px4_command_utils::cal_vel_error(_DroneState, _Reference_State, vel_error);

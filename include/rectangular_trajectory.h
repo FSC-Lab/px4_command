@@ -16,20 +16,20 @@
 
 namespace trajectory {
 struct Rectangular_Trajectory_Parameter {
-  float a_x;
-  float a_y;
-  float h;
-  float v_x;
-  float v_y;
-  float center_x;
-  float center_y;
-  float center_z;
+  double a_x;
+  double a_y;
+  double h;
+  double v_x;
+  double v_y;
+  double center_x;
+  double center_y;
+  double center_z;
 };
 
 struct Reference_Path {
-  Eigen::Vector3f P;
-  Eigen::Vector3f n;
-  float vd;
+  Eigen::Vector3d P;
+  Eigen::Vector3d n;
+  double vd;
 };
 
 class Rectangular_Trajectory {
@@ -39,16 +39,16 @@ class Rectangular_Trajectory {
   void LoadParameter(Rectangular_Trajectory_Parameter& parameter);
   void printf_param();
   void printf_result();
-  Reference_Path UpdatePosition(Eigen::Vector3f& position);
+  Reference_Path UpdatePosition(Eigen::Vector3d& position);
 
  private:
   void DetermineState();
   int state;  // indicate which path the quadrotor should follow
   // Parameter
   Rectangular_Trajectory_Parameter param_;
-  Eigen::Vector3f position;  // drone position
-  float theta[4];            // the angles for all turning points
-  float theta_now;           // the angle cooresponding to the current drone position
+  Eigen::Vector3d position;  // drone position
+  double theta[4];            // the angles for all turning points
+  double theta_now;           // the angle cooresponding to the current drone position
   int theta_output;          // the angle for outputing reference path
   Reference_Path path[4];
   int target_theta[4];  // the target angle cooresponding to each path.
@@ -109,17 +109,17 @@ void Rectangular_Trajectory::LoadParameter(Rectangular_Trajectory_Parameter& par
   theta_output = 0;
 }
 
-Reference_Path Rectangular_Trajectory::UpdatePosition(Eigen::Vector3f& position) {
+Reference_Path Rectangular_Trajectory::UpdatePosition(Eigen::Vector3d& position) {
   theta_now = atan2(position(math_utils::Vector_Y) - param_.center_y,
                     position(math_utils::Vector_X) - param_.center_x);  // get the theta at the position
   DetermineState();                                                     // determine state
   // determine whether the drone is close to the turning point
-  Eigen::Vector3f n_q;
+  Eigen::Vector3d n_q;
   n_q(math_utils::Vector_X) = cos(theta_now);
   n_q(math_utils::Vector_Y) = sin(theta_now);
   n_q(math_utils::Vector_Z) = 0.0;
 
-  Eigen::Vector3f n_p;
+  Eigen::Vector3d n_p;
   n_p(math_utils::Vector_X) = cos(theta[target_theta[state]]);
   n_p(math_utils::Vector_Y) = sin(theta[target_theta[state]]);
   n_p(math_utils::Vector_Z) = 0.0;

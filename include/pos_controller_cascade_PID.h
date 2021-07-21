@@ -36,22 +36,22 @@ class pos_controller_cascade_PID {
  public:
   //构造函数
   pos_controller_cascade_PID(void) : pos_cascade_pid_nh("~") {
-    pos_cascade_pid_nh.param<float>("Pos_cascade_pid/Kp_xy", Kp_xy, 1.0);
-    pos_cascade_pid_nh.param<float>("Pos_cascade_pid/Kp_z", Kp_z, 1.0);
-    pos_cascade_pid_nh.param<float>("Pos_cascade_pid/Kp_vxvy", Kp_vxvy, 0.1);
-    pos_cascade_pid_nh.param<float>("Pos_cascade_pid/Kp_vz", Kp_vz, 0.1);
-    pos_cascade_pid_nh.param<float>("Pos_cascade_pid/Ki_vxvy", Ki_vxvy, 0.02);
-    pos_cascade_pid_nh.param<float>("Pos_cascade_pid/Ki_vz", Ki_vz, 0.02);
-    pos_cascade_pid_nh.param<float>("Pos_cascade_pid/Kd_vxvy", Kd_vxvy, 0.01);
-    pos_cascade_pid_nh.param<float>("Pos_cascade_pid/Kd_vz", Kd_vz, 0.01);
-    pos_cascade_pid_nh.param<float>("Pos_cascade_pid/Hover_throttle", Hover_throttle, 0.5);
-    pos_cascade_pid_nh.param<float>("Pos_cascade_pid/MPC_VELD_LP", MPC_VELD_LP, 5.0);
+    pos_cascade_pid_nh.param<double>("Pos_cascade_pid/Kp_xy", Kp_xy, 1.0);
+    pos_cascade_pid_nh.param<double>("Pos_cascade_pid/Kp_z", Kp_z, 1.0);
+    pos_cascade_pid_nh.param<double>("Pos_cascade_pid/Kp_vxvy", Kp_vxvy, 0.1);
+    pos_cascade_pid_nh.param<double>("Pos_cascade_pid/Kp_vz", Kp_vz, 0.1);
+    pos_cascade_pid_nh.param<double>("Pos_cascade_pid/Ki_vxvy", Ki_vxvy, 0.02);
+    pos_cascade_pid_nh.param<double>("Pos_cascade_pid/Ki_vz", Ki_vz, 0.02);
+    pos_cascade_pid_nh.param<double>("Pos_cascade_pid/Kd_vxvy", Kd_vxvy, 0.01);
+    pos_cascade_pid_nh.param<double>("Pos_cascade_pid/Kd_vz", Kd_vz, 0.01);
+    pos_cascade_pid_nh.param<double>("Pos_cascade_pid/Hover_throttle", Hover_throttle, 0.5);
+    pos_cascade_pid_nh.param<double>("Pos_cascade_pid/MPC_VELD_LP", MPC_VELD_LP, 5.0);
 
-    pos_cascade_pid_nh.param<float>("Limit/XY_VEL_MAX", MPC_XY_VEL_MAX, 1.0);
-    pos_cascade_pid_nh.param<float>("Limit/Z_VEL_MAX", MPC_Z_VEL_MAX, 0.5);
-    pos_cascade_pid_nh.param<float>("Limit/THR_MIN", MPC_THR_MIN, 0.1);
-    pos_cascade_pid_nh.param<float>("Limit/THR_MAX", MPC_THR_MAX, 0.9);
-    pos_cascade_pid_nh.param<float>("Limit/tilt_max", tilt_max, 5.0);
+    pos_cascade_pid_nh.param<double>("Limit/XY_VEL_MAX", MPC_XY_VEL_MAX, 1.0);
+    pos_cascade_pid_nh.param<double>("Limit/Z_VEL_MAX", MPC_Z_VEL_MAX, 0.5);
+    pos_cascade_pid_nh.param<double>("Limit/THR_MIN", MPC_THR_MIN, 0.1);
+    pos_cascade_pid_nh.param<double>("Limit/THR_MAX", MPC_THR_MAX, 0.9);
+    pos_cascade_pid_nh.param<double>("Limit/tilt_max", tilt_max, 5.0);
 
     vel_setpoint = Eigen::Vector3d(0.0, 0.0, 0.0);
     thrust_sp = Eigen::Vector3d(0.0, 0.0, 0.0);
@@ -64,28 +64,28 @@ class pos_controller_cascade_PID {
   }
 
   // PID parameter for the control law
-  float Kp_xy;
-  float Kp_z;
-  float Kp_vxvy;
-  float Kp_vz;
-  float Ki_vxvy;
-  float Ki_vz;
-  float Kd_vxvy;
-  float Kd_vz;
+  double Kp_xy;
+  double Kp_z;
+  double Kp_vxvy;
+  double Kp_vz;
+  double Ki_vxvy;
+  double Ki_vz;
+  double Kd_vxvy;
+  double Kd_vz;
 
   // Limitation of the velocity
-  float MPC_XY_VEL_MAX;
-  float MPC_Z_VEL_MAX;
+  double MPC_XY_VEL_MAX;
+  double MPC_Z_VEL_MAX;
 
   // Hover thrust of drone (decided by the mass of the drone)
-  float Hover_throttle;
+  double Hover_throttle;
 
   // Limitation of the thrust
-  float MPC_THR_MIN;
-  float MPC_THR_MAX;
+  double MPC_THR_MIN;
+  double MPC_THR_MAX;
 
   // Limitation of the tilt angle (roll and pitch)  [degree]
-  float tilt_max;
+  double tilt_max;
 
   //输出
 
@@ -100,10 +100,10 @@ class pos_controller_cascade_PID {
   Eigen::Vector3d thurst_int;
   Eigen::Vector3d vel_D_output;
 
-  float MPC_VELD_LP;
+  double MPC_VELD_LP;
 
   // The delta time between now and the last step
-  float delta_time;
+  double delta_time;
 
   // Derriv of the velocity error in last step [used for the D-output in vel loop]
   Eigen::Vector3d error_vel_dot_last;
@@ -123,7 +123,7 @@ class pos_controller_cascade_PID {
   // Position control main function
   // [Input: Current state, Reference state, _Reference_State.Sub_mode, dt; Output: AttitudeReference;]
   px4_command::ControlOutput pos_controller(const px4_command::DroneState& _DroneState,
-                                            const px4_command::TrajectoryPoint& _Reference_State, float dt);
+                                            const px4_command::TrajectoryPoint& _Reference_State, double dt);
 
   // Position control loop [Input: current pos, desired pos; Output: desired vel]
   void _positionController(const px4_command::DroneState& _DroneState,
@@ -131,7 +131,7 @@ class pos_controller_cascade_PID {
 
   // Velocity control loop [Input: current vel, desired vel; Output: desired thrust]
   void _velocityController(const px4_command::DroneState& _DroneState,
-                           const px4_command::TrajectoryPoint& _Reference_State, float dt, Eigen::Vector3d& thrust_sp);
+                           const px4_command::TrajectoryPoint& _Reference_State, double dt, Eigen::Vector3d& thrust_sp);
 
   void cal_vel_error_deriv(const Eigen::Vector3d& error_now, Eigen::Vector3d& vel_error_deriv);
 
@@ -140,7 +140,7 @@ class pos_controller_cascade_PID {
 };
 
 px4_command::ControlOutput pos_controller_cascade_PID::pos_controller(
-    const px4_command::DroneState& _DroneState, const px4_command::TrajectoryPoint& _Reference_State, float dt) {
+    const px4_command::DroneState& _DroneState, const px4_command::TrajectoryPoint& _Reference_State, double dt) {
   delta_time = dt;
 
   _positionController(_DroneState, _Reference_State, vel_setpoint);
@@ -191,7 +191,7 @@ void pos_controller_cascade_PID::_positionController(const px4_command::DroneSta
 }
 
 void pos_controller_cascade_PID::_velocityController(const px4_command::DroneState& _DroneState,
-                                                     const px4_command::TrajectoryPoint& _Reference_State, float dt,
+                                                     const px4_command::TrajectoryPoint& _Reference_State, double dt,
                                                      Eigen::Vector3d& thrust_sp) {
   // Generate desired thrust setpoint.
   // PID
@@ -231,7 +231,7 @@ void pos_controller_cascade_PID::_velocityController(const px4_command::DroneSta
   vel_D_output[2] = Kd_vz * vel_error_deriv[2];
 
   // Consider thrust in Z-direction. [Here Hover_throttle is added]
-  float thrust_desired_Z =
+  double thrust_desired_Z =
       _Reference_State.acceleration_ref[2] + vel_P_output[2] + thurst_int[2] + vel_D_output[2] + Hover_throttle;
 
   // Apply Anti-Windup in Z-direction.
@@ -249,14 +249,14 @@ void pos_controller_cascade_PID::_velocityController(const px4_command::DroneSta
   thrust_sp[2] = constrain_function2(thrust_desired_Z, MPC_THR_MIN, MPC_THR_MAX);
 
   // PID-velocity controller for XY-direction.
-  float thrust_desired_X;
-  float thrust_desired_Y;
+  double thrust_desired_X;
+  double thrust_desired_Y;
   thrust_desired_X = _Reference_State.acceleration_ref[0] + vel_P_output[0] + thurst_int[0] + vel_D_output[0];
   thrust_desired_Y = _Reference_State.acceleration_ref[1] + vel_P_output[1] + thurst_int[1] + vel_D_output[1];
 
   // Get maximum allowed thrust in XY based on tilt angle and excess thrust.
-  float thrust_max_XY_tilt = fabs(thrust_sp[2]) * tanf(tilt_max / 180.0 * M_PI);
-  float thrust_max_XY = sqrtf(MPC_THR_MAX * MPC_THR_MAX - thrust_sp[2] * thrust_sp[2]);
+  double thrust_max_XY_tilt = fabs(thrust_sp[2]) * tanf(tilt_max / 180.0 * M_PI);
+  double thrust_max_XY = sqrtf(MPC_THR_MAX * MPC_THR_MAX - thrust_sp[2] * thrust_sp[2]);
   thrust_max_XY = min(thrust_max_XY_tilt, thrust_max_XY);
 
   // Saturate thrust in XY-direction.
@@ -264,7 +264,7 @@ void pos_controller_cascade_PID::_velocityController(const px4_command::DroneSta
   thrust_sp[1] = thrust_desired_Y;
 
   if ((thrust_desired_X * thrust_desired_X + thrust_desired_Y * thrust_desired_Y) > thrust_max_XY * thrust_max_XY) {
-    float mag = sqrtf((thrust_desired_X * thrust_desired_X + thrust_desired_Y * thrust_desired_Y));
+    double mag = sqrtf((thrust_desired_X * thrust_desired_X + thrust_desired_Y * thrust_desired_Y));
     thrust_sp[0] = thrust_desired_X / mag * thrust_max_XY;
     thrust_sp[1] = thrust_desired_Y / mag * thrust_max_XY;
   }
@@ -272,9 +272,9 @@ void pos_controller_cascade_PID::_velocityController(const px4_command::DroneSta
   // Use tracking Anti-Windup for XY-direction: during saturation, the integrator is used to unsaturate the output
   // see Anti-Reset Windup for PID controllers, L.Rundqwist, 1990
   // Actually, I dont understand here.
-  float arw_gain = 2.f / Kp_vxvy;
+  double arw_gain = 2.f / Kp_vxvy;
 
-  float vel_err_lim_x, vel_err_lim_y;
+  double vel_err_lim_x, vel_err_lim_y;
   vel_err_lim_x = error_vel[0] - (thrust_desired_X - thrust_sp[0]) * arw_gain;
   vel_err_lim_y = error_vel[1] - (thrust_desired_Y - thrust_sp[1]) * arw_gain;
 
@@ -296,7 +296,7 @@ void pos_controller_cascade_PID::cal_vel_error_deriv(const Eigen::Vector3d& erro
   error_vel_dot_now = (error_now - error_vel_last) / delta_time;
 
   error_vel_last = error_now;
-  float a, b;
+  double a, b;
   b = 2 * M_PI * MPC_VELD_LP * delta_time;
   a = b / (1 + b);
 

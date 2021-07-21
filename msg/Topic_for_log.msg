@@ -1,7 +1,7 @@
 std_msgs/Header header
 
 ## log时间
-float32 time             ## [s]
+float64 time             ## [s]
 
 DroneState Drone_State
 

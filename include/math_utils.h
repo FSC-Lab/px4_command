@@ -25,8 +25,8 @@ enum quaternion_component { Quat_w = 0, Quat_x = 1, Quat_y = 2, Quat_z = 3 };
 
 enum euler_component { EULER_ROLL = 0, EULER_PITCH, EULER_YAW };
 
-Eigen::Vector3f GetGravitationalAcc() {
-  Eigen::Vector3f g_I;
+Eigen::Vector3d GetGravitationalAcc() {
+  Eigen::Vector3d g_I;
   g_I(Vector_X) = 0.0;
   g_I(Vector_Y) = 0.0;
   g_I(Vector_Z) = -9.810;
@@ -53,7 +53,7 @@ Eigen::Quaterniond quaternion_from_rpy(const Eigen::Vector3d& rpy) {
 // q0 q1 q2 q3
 // w x y z
 Eigen::Vector3d quaternion_to_euler(const Eigen::Quaterniond& q) {
-  float quat[4];
+  double quat[4];
   quat[0] = q.w();
   quat[1] = q.x();
   quat[2] = q.y();
@@ -66,7 +66,7 @@ Eigen::Vector3d quaternion_to_euler(const Eigen::Quaterniond& q) {
   return ans;
 }
 
-Eigen::Vector3d quaternion_to_euler2(const Eigen::Vector4f& quat) {
+Eigen::Vector3d quaternion_to_euler2(const Eigen::Vector4d& quat) {
   Eigen::Vector3d ans;
   ans[0] = atan2(2.0 * (quat[3] * quat[2] + quat[0] * quat[1]), 1.0 - 2.0 * (quat[1] * quat[1] + quat[2] * quat[2]));
   ans[1] = asin(2.0 * (quat[2] * quat[0] - quat[3] * quat[1]));
@@ -96,7 +96,7 @@ void rotation_to_euler(const Eigen::Matrix3d& dcm, Eigen::Vector3d& euler_angle)
 }
 
 // constrain_function
-float constrain_function(float data, float Max) {
+double constrain_function(double data, double Max) {
   if (abs(data) > Max) {
     return (data > 0) ? Max : -Max;
   } else {
@@ -105,7 +105,7 @@ float constrain_function(float data, float Max) {
 }
 
 // constrain_function2
-float constrain_function2(float data, float Min, float Max) {
+double constrain_function2(double data, double Min, double Max) {
   if (data > Max) {
     return Max;
   } else if (data < Min) {
@@ -117,10 +117,10 @@ float constrain_function2(float data, float Min, float Max) {
 
 // vector based constraint
 
-Eigen::VectorXf constrain_vector(const Eigen::VectorXf& input, float Max_norm) {
-  Eigen::VectorXf result;
+Eigen::VectorXd constrain_vector(const Eigen::VectorXd& input, double Max_norm) {
+  Eigen::VectorXd result;
 
-  float norm = input.norm();
+  double norm = input.norm();
 
   if (norm > Max_norm) {
     result = input / norm * Max_norm;
@@ -131,7 +131,7 @@ Eigen::VectorXf constrain_vector(const Eigen::VectorXf& input, float Max_norm) {
 }
 
 // sign_function
-float sign_function(float data) {
+double sign_function(double data) {
   if (data > 0) {
     return 1.0;
   } else if (data < 0) {
@@ -142,7 +142,7 @@ float sign_function(float data) {
 }
 
 // min function
-float min(float data1, float data2) {
+double min(double data1, double data2) {
   if (data1 >= data2) {
     return data2;
   } else {
@@ -150,21 +150,21 @@ float min(float data1, float data2) {
   }
 }
 
-Eigen::Vector3f Veemap(const Eigen::Matrix3f& cross_matrix) {
-  Eigen::Vector3f vector;
+Eigen::Vector3d Veemap(const Eigen::Matrix3d& cross_matrix) {
+  Eigen::Vector3d vector;
   vector(0) = -cross_matrix(1, 2);
   vector(1) = cross_matrix(0, 2);
   vector(2) = -cross_matrix(0, 1);
   return vector;
 }
-Eigen::Matrix3f Hatmap(const Eigen::Vector3f& vector) {
+Eigen::Matrix3d Hatmap(const Eigen::Vector3d& vector) {
   /*
 
   r^x = [0 -r3 r2;
          r3 0 -r1;
         -r2 r1 0]
   */
-  Eigen::Matrix3f cross_matrix;
+  Eigen::Matrix3d cross_matrix;
   cross_matrix(0, 0) = 0.0;
   cross_matrix(0, 1) = -vector(2);
   cross_matrix(0, 2) = vector(1);
@@ -178,8 +178,8 @@ Eigen::Matrix3f Hatmap(const Eigen::Vector3f& vector) {
   cross_matrix(2, 2) = 0.0;
   return cross_matrix;
 }
-Eigen::Matrix3f QuaterionToRotationMatrix(const Eigen::Vector4f& quaternion) {
-  Eigen::Matrix3f R_IB;
+Eigen::Matrix3d QuaterionToRotationMatrix(const Eigen::Vector4d& quaternion) {
+  Eigen::Matrix3d R_IB;
 
   /* take a special note at the order of the quaterion
   pose[1].q0 = OptiTrackdata.pose.orientation.w;
@@ -197,7 +197,7 @@ Eigen::Matrix3f QuaterionToRotationMatrix(const Eigen::Vector4f& quaternion) {
        -q3 -q2 q1 q0]
   R_IB = RL^T
   */
-  Eigen::Matrix<float, 3, 4> L, R;
+  Eigen::Matrix<double, 3, 4> L, R;
   L(0, 0) = -quaternion(1);
   L(1, 0) = -quaternion(2);
   L(2, 0) = -quaternion(3);

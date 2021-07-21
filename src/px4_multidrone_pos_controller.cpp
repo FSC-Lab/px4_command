@@ -47,13 +47,13 @@ static px4_command::DroneState _DroneState;  // drone state from estimator
 static Eigen::Vector3d throttle_sp;
 static px4_command::ControlOutput _ControlOutput;
 static px4_command::AttitudeReference _AttitudeReference;  // attitude target sent to FCU
-static float cur_time;
+static double cur_time;
 static px4_command::Topic_for_log _Topic_for_log;
 
 /*--TO DO --- Auto Land*/
 
-static float Takeoff_height;  //
-static float Disarm_height;   //
+static double Takeoff_height;  //
+static double Disarm_height;   //
 
 static bool PrintState;
 static bool isMulti;         // cooperative mode true for multi-drone, false for single drone
@@ -61,9 +61,9 @@ static bool isCorrectDrone;  // this is used in single-drone mode for determine 
 static int CurrentdroneID;
 static int TargetdroneID;
 //>>--------------------------  geographic fence --------------------------------<<
-static Eigen::Vector2f geo_fence_x;
-static Eigen::Vector2f geo_fence_y;
-static Eigen::Vector2f geo_fence_z;
+static Eigen::Vector2d geo_fence_x;
+static Eigen::Vector2d geo_fence_y;
+static Eigen::Vector2d geo_fence_z;
 
 static Eigen::Vector3d Takeoff_position = Eigen::Vector3d(0.0, 0.0, 0.0);
 static Eigen::Vector3d pos_drone_mocap;  //无人机当前位置 (vicon)
@@ -158,8 +158,8 @@ void drone_state_cb(const px4_command::DroneState::ConstPtr& msg) {
 void SendGeneralInfoToGroundstation(ros::ServiceClient& client, px4_command::GeneralInfo& ParamSrv) {
   bool isresponserecieved = false;
   ros::Time begin_time = ros::Time::now();
-  float last_time = px4_command_utils::get_time_in_sec(begin_time);
-  float cur_time = last_time;
+  double last_time = px4_command_utils::get_time_in_sec(begin_time);
+  double cur_time = last_time;
   ROS_INFO("Sending general information to ground station ...");
   while (!isresponserecieved) {
     // very 3 seconds, send a parameter service call to the ground station.
@@ -227,15 +227,15 @@ int main(int argc, char** argv) {
   ros::ServiceClient clientSendParameter = nh.serviceClient<px4_command::GeneralInfo>(px4_command_generalinfo);
 
   // 参数读取
-  nh.param<float>("Takeoff_height", Takeoff_height, 0.3);
-  nh.param<float>("Disarm_height", Disarm_height, 0.15);
+  nh.param<double>("Takeoff_height", Takeoff_height, 0.3);
+  nh.param<double>("Disarm_height", Disarm_height, 0.15);
   nh.param<bool>("PrintState", PrintState, false);
-  nh.param<float>("DroneGeoFence/x_min", geo_fence_x[0], -1.2);
-  nh.param<float>("DroneGeoFence/x_max", geo_fence_x[1], 1.2);
-  nh.param<float>("DroneGeoFence/y_min", geo_fence_y[0], -0.9);
-  nh.param<float>("DroneGeoFence/y_max", geo_fence_y[1], 0.9);
-  nh.param<float>("DroneGeoFence/z_min", geo_fence_z[0], 0.0);
-  nh.param<float>("DroneGeoFence/z_max", geo_fence_z[1], 2);
+  nh.param<double>("DroneGeoFence/x_min", geo_fence_x[0], -1.2);
+  nh.param<double>("DroneGeoFence/x_max", geo_fence_x[1], 1.2);
+  nh.param<double>("DroneGeoFence/y_min", geo_fence_y[0], -0.9);
+  nh.param<double>("DroneGeoFence/y_max", geo_fence_y[1], 0.9);
+  nh.param<double>("DroneGeoFence/z_min", geo_fence_z[0], 0.0);
+  nh.param<double>("DroneGeoFence/z_max", geo_fence_z[1], 2);
   nh.param<bool>("CooperativeMode/isMulti", isMulti, false);
   nh.param<int>("CooperativeMode/droneID", TargetdroneID, 0);
 
@@ -349,8 +349,8 @@ int main(int argc, char** argv) {
 
   // record the time
   ros::Time begin_time = ros::Time::now();
-  float last_time = px4_command_utils::get_time_in_sec(begin_time);
-  float dt = 0;
+  double last_time = px4_command_utils::get_time_in_sec(begin_time);
+  double dt = 0;
 
   while (ros::ok()) {
     // get the current time and time stamp

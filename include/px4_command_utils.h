@@ -186,16 +186,16 @@ void prinft_attitude_reference(const px4_command::AttitudeReference& _AttitudeRe
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 其 他 函 数 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // 【获取当前时间函数】 单位：秒
-float get_time_in_sec(const ros::Time& begin_time) {
+double get_time_in_sec(const ros::Time& begin_time) {
   ros::Time time_now = ros::Time::now();
-  float currTimeSec = time_now.sec - begin_time.sec;
-  float currTimenSec = time_now.nsec / 1e9 - begin_time.nsec / 1e9;
+  double currTimeSec = time_now.sec - begin_time.sec;
+  double currTimenSec = time_now.nsec / 1e9 - begin_time.nsec / 1e9;
   return (currTimeSec + currTimenSec);
 }
 
 // 【坐标系旋转函数】- 机体系到enu系
 // body_frame是机体系,enu_frame是惯性系，yaw_angle是当前偏航角[rad]
-void rotation_yaw(float yaw_angle, float body_frame[2], float enu_frame[2]) {
+void rotation_yaw(double yaw_angle, double body_frame[2], double enu_frame[2]) {
   enu_frame[0] = body_frame[0] * cos(yaw_angle) - body_frame[1] * sin(yaw_angle);
   enu_frame[1] = body_frame[0] * sin(yaw_angle) + body_frame[1] * cos(yaw_angle);
 }
@@ -203,7 +203,7 @@ void rotation_yaw(float yaw_angle, float body_frame[2], float enu_frame[2]) {
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 控 制 辅 助 函 数 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 //计算位置误差
 void cal_pos_error(const px4_command::DroneState& _DroneState, const px4_command::TrajectoryPoint& _Reference_State,
-                   Eigen::Vector3f& pos_error) {
+                   Eigen::Vector3d& pos_error) {
   for (int i = 0; i < 3; i++) {
     pos_error[i] = _Reference_State.position_ref[i] - _DroneState.position[i];
   }
@@ -224,7 +224,7 @@ void cal_pos_error(const px4_command::DroneState& _DroneState, const px4_command
 
 //计算速度误差
 void cal_vel_error(const px4_command::DroneState& _DroneState, const px4_command::TrajectoryPoint& _Reference_State,
-                   Eigen::Vector3f& vel_error) {
+                   Eigen::Vector3d& vel_error) {
   for (int i = 0; i < 3; i++) {
     vel_error[i] = _Reference_State.velocity_ref[i] - _DroneState.velocity[i];
   }
@@ -232,37 +232,17 @@ void cal_vel_error(const px4_command::DroneState& _DroneState, const px4_command
 
 // lift to thrust setpoint double
 
-Eigen::Vector3d ForceToThrust(const Eigen::Vector3d& Force, float tilt_max) {
+Eigen::Vector3d ForceToThrust(const Eigen::Vector3d& Force, double tilt_max) {
   Eigen::Vector3d thrust_sp;
   thrust_sp = Force / NUM_MOTOR;
 
   // 推力限幅，根据最大倾斜角及最大油门
-  float thrust_max_XY_tilt = fabs(thrust_sp[2]) * tanf(tilt_max / 180.0 * M_PI);
-  float thrust_max_XY = sqrtf(thrust_max_single_motor * thrust_max_single_motor - pow(thrust_sp[2], 2));
+  double thrust_max_XY_tilt = fabs(thrust_sp[2]) * tanf(tilt_max / 180.0 * M_PI);
+  double thrust_max_XY = sqrtf(thrust_max_single_motor * thrust_max_single_motor - pow(thrust_sp[2], 2));
   thrust_max_XY = min(thrust_max_XY_tilt, thrust_max_XY);
 
   if ((pow(thrust_sp[0], 2) + pow(thrust_sp[1], 2)) > pow(thrust_max_XY, 2)) {
-    float mag = sqrtf((pow(thrust_sp[0], 2) + pow(thrust_sp[1], 2)));
-    thrust_sp[0] = thrust_sp[0] / mag * thrust_max_XY;
-    thrust_sp[1] = thrust_sp[1] / mag * thrust_max_XY;
-  }
-
-  return thrust_sp;
-}
-
-// lift to thrust setpoint float
-
-Eigen::Vector3f ForceToThrust(const Eigen::Vector3f& Force, float tilt_max) {
-  Eigen::Vector3f thrust_sp;
-  thrust_sp = Force / NUM_MOTOR;
-
-  // 推力限幅，根据最大倾斜角及最大油门
-  float thrust_max_XY_tilt = fabs(thrust_sp[2]) * tanf(tilt_max / 180.0 * M_PI);
-  float thrust_max_XY = sqrtf(thrust_max_single_motor * thrust_max_single_motor - pow(thrust_sp[2], 2));
-  thrust_max_XY = min(thrust_max_XY_tilt, thrust_max_XY);
-
-  if ((pow(thrust_sp[0], 2) + pow(thrust_sp[1], 2)) > pow(thrust_max_XY, 2)) {
-    float mag = sqrtf((pow(thrust_sp[0], 2) + pow(thrust_sp[1], 2)));
+    double mag = sqrtf((pow(thrust_sp[0], 2) + pow(thrust_sp[1], 2)));
     thrust_sp[0] = thrust_sp[0] / mag * thrust_max_XY;
     thrust_sp[1] = thrust_sp[1] / mag * thrust_max_XY;
   }
@@ -271,19 +251,19 @@ Eigen::Vector3f ForceToThrust(const Eigen::Vector3f& Force, float tilt_max) {
 }
 
 // accelToThrust setpoint
-Eigen::Vector3d accelToThrust(const Eigen::Vector3d& accel_sp, float mass, float tilt_max) {
+Eigen::Vector3d accelToThrust(const Eigen::Vector3d& accel_sp, double mass, double tilt_max) {
   Eigen::Vector3d thrust_sp;
 
   //除以电机个数得到单个电机的期望推力
   thrust_sp = mass * accel_sp / NUM_MOTOR;
 
   // 推力限幅，根据最大倾斜角及最大油门
-  float thrust_max_XY_tilt = fabs(thrust_sp[2]) * tanf(tilt_max / 180.0 * M_PI);
-  float thrust_max_XY = sqrtf(thrust_max_single_motor * thrust_max_single_motor - pow(thrust_sp[2], 2));
+  double thrust_max_XY_tilt = fabs(thrust_sp[2]) * tanf(tilt_max / 180.0 * M_PI);
+  double thrust_max_XY = sqrtf(thrust_max_single_motor * thrust_max_single_motor - pow(thrust_sp[2], 2));
   thrust_max_XY = min(thrust_max_XY_tilt, thrust_max_XY);
 
   if ((pow(thrust_sp[0], 2) + pow(thrust_sp[1], 2)) > pow(thrust_max_XY, 2)) {
-    float mag = sqrtf((pow(thrust_sp[0], 2) + pow(thrust_sp[1], 2)));
+    double mag = sqrtf((pow(thrust_sp[0], 2) + pow(thrust_sp[1], 2)));
     thrust_sp[0] = thrust_sp[0] / mag * thrust_max_XY;
     thrust_sp[1] = thrust_sp[1] / mag * thrust_max_XY;
   }
@@ -291,25 +271,6 @@ Eigen::Vector3d accelToThrust(const Eigen::Vector3d& accel_sp, float mass, float
   return thrust_sp;
 }
 
-Eigen::Vector3f accelToThrust(const Eigen::Vector3f& accel_sp, float mass, float tilt_max) {
-  Eigen::Vector3f thrust_sp;
-
-  //除以电机个数得到单个电机的期望推力
-  thrust_sp = mass * accel_sp / NUM_MOTOR;
-
-  // 推力限幅，根据最大倾斜角及最大油门
-  float thrust_max_XY_tilt = fabs(thrust_sp[2]) * tanf(tilt_max / 180.0 * M_PI);
-  float thrust_max_XY = sqrtf(thrust_max_single_motor * thrust_max_single_motor - pow(thrust_sp[2], 2));
-  thrust_max_XY = min(thrust_max_XY_tilt, thrust_max_XY);
-
-  if ((pow(thrust_sp[0], 2) + pow(thrust_sp[1], 2)) > pow(thrust_max_XY, 2)) {
-    float mag = sqrtf((pow(thrust_sp[0], 2) + pow(thrust_sp[1], 2)));
-    thrust_sp[0] = thrust_sp[0] / mag * thrust_max_XY;
-    thrust_sp[1] = thrust_sp[1] / mag * thrust_max_XY;
-  }
-
-  return thrust_sp;
-}
 // convert thrust to throttle based on quadrotor thrust model
 Eigen::Vector3d thrustToThrottle(const Eigen::Vector3d& thrust_sp) {
   Eigen::Vector3d throttle_sp;
@@ -331,18 +292,11 @@ Eigen::Vector3d thrustToThrottleLinear(const Eigen::Vector3d& thrust_sp, double 
   return throttle_sp;
 }
 
-Eigen::Vector3f thrustToThrottleLinear(const Eigen::Vector3f& thrust_sp, double slope, double intercept) {
-  Eigen::Vector3f throttle_sp;
-  // Linear motor model
-  throttle_sp = (slope * thrust_sp.norm() + intercept) * thrust_sp.normalized();
-  return throttle_sp;
-}
-
 // Throttle to Attitude
 // Thrust to Attitude
 // Input: desired thrust (desired throttle [0,1]) and yaw_sp(rad)
 // Output: desired attitude (quaternion)
-px4_command::AttitudeReference ThrottleToAttitude(const Eigen::Vector3d& thr_sp, float yaw_sp) {
+px4_command::AttitudeReference ThrottleToAttitude(const Eigen::Vector3d& thr_sp, double yaw_sp) {
   px4_command::AttitudeReference _AttitudeReference;
   Eigen::Vector3d att_sp;
   att_sp[2] = yaw_sp;

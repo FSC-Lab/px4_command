@@ -27,21 +27,21 @@ class Circle_Trajectory {
  public:
   //构造函数
   Circle_Trajectory(void) : Circle_Trajectory_nh("~") {
-    Circle_Trajectory_nh.param<float>("Circle_Trajectory/Center_x", center[0], 0.0);
-    Circle_Trajectory_nh.param<float>("Circle_Trajectory/Center_y", center[1], 0.0);
-    Circle_Trajectory_nh.param<float>("Circle_Trajectory/Center_z", center[2], 1.0);
-    Circle_Trajectory_nh.param<float>("Circle_Trajectory/radius", radius, 1.0);
-    Circle_Trajectory_nh.param<float>("Circle_Trajectory/linear_vel", linear_vel, 0.5);
-    Circle_Trajectory_nh.param<float>("Circle_Trajectory/time_total", time_total, 10.0);
-    Circle_Trajectory_nh.param<float>("Circle_Trajectory/direction", direction, 1.0);
+    Circle_Trajectory_nh.param<double>("Circle_Trajectory/Center_x", center[0], 0.0);
+    Circle_Trajectory_nh.param<double>("Circle_Trajectory/Center_y", center[1], 0.0);
+    Circle_Trajectory_nh.param<double>("Circle_Trajectory/Center_z", center[2], 1.0);
+    Circle_Trajectory_nh.param<double>("Circle_Trajectory/radius", radius, 1.0);
+    Circle_Trajectory_nh.param<double>("Circle_Trajectory/linear_vel", linear_vel, 0.5);
+    Circle_Trajectory_nh.param<double>("Circle_Trajectory/time_total", time_total, 10.0);
+    Circle_Trajectory_nh.param<double>("Circle_Trajectory/direction", direction, 1.0);
   }
 
   // Parameter
-  Eigen::Vector3f center;
-  float radius;
-  float linear_vel;
-  float time_total;
-  float direction;  // direction = 1 for CCW 逆时针, direction = -1 for CW 顺时针
+  Eigen::Vector3d center;
+  double radius;
+  double linear_vel;
+  double time_total;
+  double direction;  // direction = 1 for CCW 逆时针, direction = -1 for CW 顺时针
 
   // Printf the Circle_Trajectory parameter
   void printf_param();
@@ -50,23 +50,23 @@ class Circle_Trajectory {
   void printf_result(px4_command::TrajectoryPoint& Circle_trajectory);
 
   // Circle_Trajectory Calculation [Input: time_from_start; Output: Circle_trajectory;]
-  void Circle_trajectory_generation(float time_from_start, px4_command::TrajectoryPoint& Circle_trajectory);
+  void Circle_trajectory_generation(double time_from_start, px4_command::TrajectoryPoint& Circle_trajectory);
 
  private:
   ros::NodeHandle Circle_Trajectory_nh;
 };
 
-void Circle_Trajectory::Circle_trajectory_generation(float time_from_start,
+void Circle_Trajectory::Circle_trajectory_generation(double time_from_start,
                                                      px4_command::TrajectoryPoint& Circle_trajectory) {
-  float omega;
+  double omega;
   if (radius != 0) {
     omega = direction * fabs(linear_vel / radius);
   } else {
     omega = 0.0;
   }
-  const float angle = time_from_start * omega;
-  const float cos_angle = cos(angle);
-  const float sin_angle = sin(angle);
+  const double angle = time_from_start * omega;
+  const double cos_angle = cos(angle);
+  const double sin_angle = sin(angle);
 
   // cout << "omega : " << omega  * 180/M_PI <<" [deg/s] " <<endl;
   // cout << "angle : " << angle  * 180/M_PI <<" [deg] " <<endl;

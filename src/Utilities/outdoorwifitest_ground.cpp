@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
   ros::NodeHandle nh("~");
   ros::Rate rate(50.0);
 
-  float CurrentTime = 0.0;
+  double CurrentTime = 0.0;
   ros::Time begin_time = ros::Time::now();
 
   int tickfordisplay = 0;

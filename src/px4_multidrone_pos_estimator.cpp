@@ -72,7 +72,7 @@ void laser_cb(const tf2_msgs::TFMessage::ConstPtr& msg) {
   if (msg->transforms[0].header.frame_id == "map") {
     laser = msg->transforms[0];
 
-    float dt_laser;
+    double dt_laser;
 
     dt_laser = (laser.header.stamp.sec - laser_last.header.stamp.sec) +
                (laser.header.stamp.nsec - laser_last.header.stamp.nsec) / 10e9;
@@ -102,7 +102,7 @@ void sonic_cb(const std_msgs::UInt16::ConstPtr& msg) {
   sonic = *msg;
 
   //位置
-  pos_drone_laser[2] = (float)sonic.data / 1000;
+  pos_drone_laser[2] = (double)sonic.data / 1000;
 }
 
 void tfmini_cb(const sensor_msgs::Range::ConstPtr& msg) {
