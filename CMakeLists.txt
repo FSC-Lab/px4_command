@@ -118,19 +118,6 @@ add_dependencies(px4_multidrone_pos_estimator_outdoor px4_command_gencpp)
 target_link_libraries(px4_multidrone_pos_estimator_outdoor ${catkin_LIBRARIES})
 
 ###### Utilities File ##########
-
-add_executable(set_uav0_mode src/Utilities/set_uav0_mode.cpp)
-add_dependencies(set_uav0_mode px4_command_gencpp)
-target_link_libraries(set_uav0_mode ${catkin_LIBRARIES})
-
-add_executable(set_uav1_mode src/Utilities/set_uav1_mode.cpp)
-add_dependencies(set_uav1_mode px4_command_gencpp)
-target_link_libraries(set_uav1_mode ${catkin_LIBRARIES})
-
-add_executable(set_uav2_mode src/Utilities/set_uav2_mode.cpp)
-add_dependencies(set_uav2_mode px4_command_gencpp)
-target_link_libraries(set_uav2_mode ${catkin_LIBRARIES})
-
 add_executable(outdoorwifitest src/Utilities/outdoorwifitest.cpp)
 add_dependencies(outdoorwifitest px4_command_gencpp)
 target_link_libraries(outdoorwifitest ${catkin_LIBRARIES})
